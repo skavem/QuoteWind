@@ -1,0 +1,20 @@
+{
+  "name": "prisma_fts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "npx prisma migrate dev --name init --create-only && echo Don't forget to change migration according to https://github.com/nikolasburk/generated-columns for GENERATED ALWAYS AS (to_tsvector('russian', name)) STORED",
+    "migrate": "npx prisma migrate deploy",
+    "fill": "ts-node ./src/index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.11.19",
+    "prisma": "^4.9.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.9.0"
+  }
+}
