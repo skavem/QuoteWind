@@ -8,7 +8,7 @@
 💪 Не зависит от платформы (решения можно собирать для любой платформы, поддерживающей [Docker](https://github.com/docker-library/official-images#architectures-other-than-amd64))
 
 ## Установка
-🦶 Установить [Docker](https://docs.docker.com/get-docker/) и [Git](https://docs.github.com/ru/get-started/quickstart/set-up-git)
+🦶 Установить [Docker](https://docs.docker.com/get-docker), [Node](https://nodejs.org) и [Git](https://docs.github.com/ru/get-started/quickstart/set-up-git)
 🦶 Загрузить этот репозиторий:
 ```
 git clone https://github.com/skavem/QuoteWind
