@@ -4,17 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prepare": "npx prisma migrate dev --name init --create-only && echo Don't forget to change migration according to https://github.com/nikolasburk/generated-columns for GENERATED ALWAYS AS (to_tsvector('russian', name)) STORED",
-    "migrate": "npx prisma migrate deploy",
-    "fill": "ts-node ./src/index.ts"
+    "prepare": "dotenv -e ../.env -- npx prisma migrate dev --name init --create-only && echo Don't forget to change migration according to https://github.com/nikolasburk/generated-columns for GENERATED ALWAYS AS (to_tsvector('russian', name)) STORED",
+    "migrate": "dotenv -e ../.env -- npx prisma migrate deploy",
+    "fill": "dotenv -e ../.env -- ts-node ./src/index.ts",
+    "createuser": "dotenv -e ../.env -- ts-node ./src/createUser.ts"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/minimist": "^1.2.2",
     "@types/node": "^18.11.19",
     "prisma": "^4.9.0"
   },
   "dependencies": {
-    "@prisma/client": "^4.9.0"
+    "@prisma/client": "^4.9.0",
+    "@supabase/supabase-js": "^2.7.1",
+    "dotenv": "^16.0.3",
+    "dotenv-cli": "^7.0.0",
+    "minimist": "^1.2.7"
   }
 }

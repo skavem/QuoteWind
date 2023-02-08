@@ -100,7 +100,7 @@ const Login = () => {
 
   if (session) {
     return (
-      <Navigate to={location.state.navigateTo ?? '/'} />
+      <Navigate to={location.state ? location.state.navigateTo ?? '/' : '/'} />
     )
   }  
 

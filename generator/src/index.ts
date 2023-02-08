@@ -1,5 +1,6 @@
 import fs from 'fs'
 import { PrismaClient } from "@prisma/client";
+import { createClient } from '@supabase/supabase-js';
 
 type Book = {
   name: string,
@@ -106,7 +107,7 @@ const setupState = async (prisma: PrismaClient) => {
     const { id: bookId } = await prisma.book.create({
       data: {
         full_name: book.fullName,
-        index: bookIndex,
+        index: bookIndex + 1,
         name: book.name
       }
     })
@@ -114,11 +115,11 @@ const setupState = async (prisma: PrismaClient) => {
     await Promise.all(book.content.map(async (chapter, chapterIndex) => {
       await prisma.chapter.create({
         data: {
-          index: chapterIndex,
+          index: chapterIndex + 1,
           book_id: bookId,
           Verse: {
             createMany: {
-              data: chapter.map((verse, verseIndex) => ({index: verseIndex, text: verse}))
+              data: chapter.map((verse, verseIndex) => ({index: verseIndex + 1, text: verse}))
             }
           }
         }
@@ -128,7 +129,7 @@ const setupState = async (prisma: PrismaClient) => {
 
   const songs = JSON.parse(fs.readFileSync('./data/songs.json').toString()) as Song[]
   await Promise.all(songs.map(async song => {
-    const { couplets } = song.couplets.reduce((prev: { chorus: Couplet | null, couplets: Couplet[] }, couplet, curInd) => {
+    const { couplets } = song.couplets.reduce((prev: { chorus: Couplet | null, couplets: Couplet[] }, couplet) => {
       prev.couplets.push(couplet)
       if (couplet.name !== 'Припев' && prev.chorus) {
         prev.couplets.push(prev.chorus)
@@ -147,7 +148,7 @@ const setupState = async (prisma: PrismaClient) => {
         Couplet: {
           createMany: {
             data: couplets.map((couplet, index) => ({
-              index,
+              index: index + 1,
               label: couplet.name,
               text: couplet.text
             }))
