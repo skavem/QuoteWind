@@ -1,5 +1,6 @@
 # ==== CONFIGURE =====
 FROM node:19-alpine as builder
+LABEL stage=builder
 WORKDIR /app
 COPY . .
 # ==== BUILD =====
