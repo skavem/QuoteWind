@@ -12,9 +12,9 @@ import OnlineListMenu from '../songs/OnlineListMenu'
 import useContextMenuWithItem from '../../../utils/hooks/useContextMenuWithItem'
 import { ContentCopy, Delete, Edit, PlaylistAdd, VerticalAlignBottom, VerticalAlignTop } from '@mui/icons-material'
 import { supabase } from '../../../supabase'
-import { DBTables } from '../../../types/supabase'
 import copyToClipboard from '../../../utils/copyToClipboardPolyfill'
 import { useHotkeys } from '../../../utils/hooks/useHotkeys'
+import { DBTables } from '../../../types/supabase-extended'
 
 const CoupletList = () => {
   const shownCoupletId = useAppSelector(state => state.shown.currentCoupletId)

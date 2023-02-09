@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { supabase } from "."
-import { Json, StateRow } from "../types/supabase"
+import { Json } from "../types/supabase"
+import { StateRow } from "../types/supabase-extended"
 
 export type QrStyles = {
   data?: string,

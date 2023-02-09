@@ -23,6 +23,7 @@ git clone https://github.com/skavem/QuoteWind
 ```
 cd ./QuoteWind/generator
 # Обратите внимание на последнюю строчку следующей команды - необходимо изменить сгенерированную миграцию вручную
+npm ci
 npm run prepare
 npm run migrate
 npm run fill

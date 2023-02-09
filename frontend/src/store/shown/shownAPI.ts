@@ -1,5 +1,5 @@
 import { AppDispatch } from "..";
-import { StateRow } from "../../types/supabase";
+import { StateRow } from "../../types/supabase-extended";
 import { shownSlice } from "./shownReducer";
 
 export const setShownVerse = (verseId: StateRow['verse_id'] | null) => {

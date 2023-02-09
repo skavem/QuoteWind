@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { onlineListInitialState, onlineListDefaultItem } from "../../types/onlineList";
-import { DBTables } from "../../types/supabase";
+import { DBTables } from "../../types/supabase-extended";
 
 export type SongFavorite = onlineListDefaultItem & {
   songId: DBTables['Song']['Row']['id']

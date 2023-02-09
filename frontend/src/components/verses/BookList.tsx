@@ -37,6 +37,7 @@ const BookList = () => {
         reduxStoreName={onlineListStores.books}
         onClick={item => dispatch(setCurrentBook(item.id))}
         getMark={_ => undefined}
+        dividerBefore={item => item.part}
       />
     </Box>
   )

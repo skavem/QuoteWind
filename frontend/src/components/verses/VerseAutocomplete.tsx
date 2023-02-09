@@ -1,4 +1,4 @@
-import { DBTables } from '../../types/supabase'
+import { DBTables } from '../../types/supabase-extended'
 import { supabase } from '../../supabase'
 import { useAppDispatch } from '../../store/hooks'
 import { setCurrentBook } from '../../store/books/booksApi'

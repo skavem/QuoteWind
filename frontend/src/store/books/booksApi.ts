@@ -1,6 +1,6 @@
 import { AppDispatch, onlineListStores, RootState } from ".."
 import { Database } from "../../types/supabase"
-import { booksSlice } from "./booksReducer"
+import { BookItem, booksSlice } from "./booksReducer"
 import { onlineListDefaultItem } from "../../types/onlineList";
 import { supabase } from "../../supabase";
 import { setChapters, setCurrentChapter } from "../chapters/chaptersAPI";
@@ -8,13 +8,14 @@ import { setChapters, setCurrentChapter } from "../chapters/chaptersAPI";
 export const setBooks = (
   books: Database['public']['Tables']['Book']['Row'][]
 ) => {
-  const transformedBooks: onlineListDefaultItem[] = books
+  const transformedBooks: BookItem[] = books
     .sort((book1, book2) => book1.index - book2.index)
     .map(
       book => ({
         id: book.id,
         data: book.full_name,
-        mark: book.name
+        mark: book.name,
+        part: book.divider_before
       })
     )
   return async (dispatch: AppDispatch) => {

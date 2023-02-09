@@ -1,5 +1,5 @@
 import React, { RefObject } from 'react'
-import { Box, Typography, styled } from '@mui/material'
+import { Box, Typography, styled, Divider } from '@mui/material'
 import { Visibility } from '@mui/icons-material'
 import theme from '../../theme'
 import { onlineListStores, RootState } from '../../store'
@@ -31,42 +31,47 @@ interface OnlineListItemProps <T extends onlineListStores> {
   onDoubleClick?: (item: RootState[T]['items'][0]) => void,
   onContextMenu?: (e: React.MouseEvent<HTMLElement>, item: RootState[T]['items'][0]) => void,
   getMark?: (item: RootState[T]['items'][0]) => string | undefined,
-  activeRef?: RefObject<HTMLElement> | null
+  activeRef?: RefObject<HTMLElement> | null,
+  dividerBefore?: (item: RootState[T]['items'][0]) => string | null
 }
 
 const OnlineListItem = ({ 
-  item, active, shown, activeRef,
+  item, active, shown, activeRef, dividerBefore,
   getMark = (item) => item.mark ?? '',
   onClick = () => {},
   onDoubleClick = () => {},
   onContextMenu = () => {}
 }: OnlineListItemProps<onlineListStores>) => {
   const mark = getMark(item)
+  const divider = dividerBefore ? dividerBefore(item) : null
   return (
-    <ItemBox 
-      sx={{outline: (theme) => active ? `2px solid ${theme.palette.action.active}` : ''}}
-      onClick={() => onClick(item)}
-      onDoubleClick={() => onDoubleClick(item)}
-      onContextMenu={e => onContextMenu(e, item)}
-      ref={activeRef}
-    >
-      {
-        shown && 
-        <Visibility 
-          sx={{
-            verticalAlign: 'middle',
-            padding: theme.spacing(0, 0.25, 0, 0),
-            mr: theme.spacing(0.125),
-            height: 'auto'
-          }}
-        />
-      }
-      {
-        mark &&
-        <ItemMark variant='body2'>{mark}</ItemMark>
-      }
-      <Typography variant='body1' display='inline'>{item.data}</Typography>
-    </ItemBox>
+    <>
+      {divider ? (<Divider>{divider}</Divider>) : (<></>)}
+      <ItemBox 
+        sx={{outline: (theme) => active ? `2px solid ${theme.palette.action.active}` : ''}}
+        onClick={() => onClick(item)}
+        onDoubleClick={() => onDoubleClick(item)}
+        onContextMenu={e => onContextMenu(e, item)}
+        ref={activeRef}
+      >
+        {
+          shown && 
+          <Visibility 
+            sx={{
+              verticalAlign: 'middle',
+              padding: theme.spacing(0, 0.25, 0, 0),
+              mr: theme.spacing(0.125),
+              height: 'auto'
+            }}
+          />
+        }
+        {
+          mark &&
+          <ItemMark variant='body2'>{mark}</ItemMark>
+        }
+        <Typography variant='body1' display='inline'>{item.data}</Typography>
+      </ItemBox>
+    </>
   )
 }
 

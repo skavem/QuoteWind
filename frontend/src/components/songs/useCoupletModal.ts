@@ -4,7 +4,7 @@ import { useState } from "react"
 import { CoupletFields } from "./songs/CoupletModal"
 import { onlineListStores, RootState } from "../../store"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
-import { DBTables } from "../../types/supabase"
+import { DBTables } from "../../types/supabase-extended"
 import { setHotkeysBlocked } from "../../store/hotkeysBlockReducer"
 
 const useCoupletModal = () => {

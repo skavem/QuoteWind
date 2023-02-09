@@ -7,10 +7,10 @@ import { TextField } from 'formik-mui'
 import { useSnackbar } from 'notistack'
 import { supabase } from '../../../supabase'
 import AddParameters from '../../../types/AddParameters'
-import { DBTables } from '../../../types/supabase'
 import useSongModal from '../useSongModal'
 import { CenteredModalBox } from '../../StyledMUI'
 import { PostgrestError } from '@supabase/supabase-js'
+import { DBTables } from '../../../types/supabase-extended'
 
 export interface SongFields {
   label: DBTables['Song']['Row']['label'],

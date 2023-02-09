@@ -1,8 +1,8 @@
-import { DBTables } from '../../types/supabase'
 import { supabase } from '../../supabase'
 import { useAppDispatch } from '../../store/hooks'
 import { setCurrentSong } from '../../store/songs/songsAPI'
 import AutocompleteSearch from '../Autocomplete/AutocompleteSearch'
+import { DBTables } from '../../types/supabase-extended'
 
 type SearchedSong = {
   id: DBTables['Song']['Row']['id'],

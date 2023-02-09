@@ -1,5 +1,5 @@
 import {  useEffect } from "react";
-import { DBTables, StateRow } from '../types/supabase'
+import { DBTables, StateRow } from '../types/supabase-extended'
 import { useAppDispatch } from "../store/hooks";
 import { setBooks } from "../store/books/booksApi";
 import { setShownCouplet, setShownVerse } from "../store/shown/shownAPI";

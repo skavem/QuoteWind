@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { StateRow } from "../../types/supabase";
+import { StateRow } from "../../types/supabase-extended";
 
 interface stateInitialState {
   currentVerseId: StateRow['verse_id'] | null,

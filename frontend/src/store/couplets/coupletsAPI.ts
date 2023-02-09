@@ -1,5 +1,5 @@
 import { AppDispatch, onlineListStores, RootState } from "..";
-import { DBTables } from "../../types/supabase";
+import { DBTables } from "../../types/supabase-extended";
 import { Couplet, coupletsSlice } from "./coupletsReducer";
 
 export const setCouplets = (

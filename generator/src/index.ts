@@ -5,7 +5,8 @@ import { createClient } from '@supabase/supabase-js';
 type Book = {
   name: string,
   fullName: string
-  content: string[][]
+  content: string[][],
+  dividerBefore?: string
 }
 type Bible = Book[]
 
@@ -108,7 +109,8 @@ const setupState = async (prisma: PrismaClient) => {
       data: {
         full_name: book.fullName,
         index: bookIndex + 1,
-        name: book.name
+        name: book.name,
+        divider_before: book.dividerBefore ?? null
       }
     })
 

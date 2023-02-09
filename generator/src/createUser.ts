@@ -17,12 +17,10 @@ const Supabase = createClient(
 
 (async () => {
   const { error, data } = await Supabase.auth.admin.createUser({
-    email: argv['email'],
-    password: argv['password'],
+    email: argv['email'] ?? argv['e'],
+    password: argv['password'] ?? argv['p'],
     email_confirm: true
   })
-
-  console.log(argv['password'])
 
   if (error) {
     console.error('Ошибка регистрации пользователя: ', error)

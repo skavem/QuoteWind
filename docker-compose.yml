@@ -104,7 +104,7 @@ services:
       PGRST_DB_USE_LEGACY_GUCS: "false"
 
   realtime:
-    container_name: realtime-dev.supabase-realtime
+    container_name: supabase-realtime
     image: supabase/realtime:v2.1.0
     depends_on:
       db: # Disable this if you are using an external Postgres database
@@ -173,6 +173,9 @@ services:
       db: # Disable this if you are using an external Postgres database
         condition: service_healthy
     restart: unless-stopped
+    ports:
+      - 4015:8080
+      - 4016:8081
     environment:
       PG_META_PORT: 8080
       PG_META_DB_HOST: ${POSTGRES_HOST}

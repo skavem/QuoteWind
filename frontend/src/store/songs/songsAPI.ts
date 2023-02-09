@@ -1,7 +1,8 @@
 import { AppDispatch } from ".."
 import { supabase } from "../../supabase"
 import { onlineListDefaultItem } from "../../types/onlineList"
-import { Database, DBTables } from "../../types/supabase"
+import { Database } from "../../types/supabase"
+import { DBTables } from "../../types/supabase-extended"
 import { setCouplets } from "../couplets/coupletsAPI"
 import { songsSlice } from "./songsReducer"
 

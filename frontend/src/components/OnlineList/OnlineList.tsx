@@ -43,11 +43,12 @@ interface onlineListProps <T extends onlineListStores> {
   shownItemId?: RootState[T]['items'][0]['id'] | null,
   getMark?: (item: RootState[T]['items'][0]) => string | undefined,
   itemsOnPage?: number,
-  page?: number
+  page?: number,
+  dividerBefore?: (item: RootState[T]['items'][0]) => string | null
 }
 
 const OnlineList = <T extends onlineListStores,>({
-  reduxStoreName, onClick, shownItemId, itemsOnPage, page,
+  reduxStoreName, onClick, shownItemId, itemsOnPage, page, dividerBefore,
   onDoubleClick = () => {},
   onItemContextMenu = () => {},
   onContextMenu = () => {},
@@ -89,6 +90,7 @@ const OnlineList = <T extends onlineListStores,>({
           shown={item.id === shownItemId}
           getMark={getMark}
           activeRef={item.id === currentId ? activeRef : null}
+          dividerBefore={dividerBefore}
         />
       ))}
     </OnlineListBox>

@@ -9,11 +9,12 @@ datasource db {
 }
 
 model Book {
-  id        Int       @id @default(autoincrement())
-  full_name String    @unique
-  name      String    @unique
-  index     Int       @unique
-  Chapter   Chapter[]
+  id             Int       @id @default(autoincrement())
+  full_name      String    @unique
+  name           String    @unique
+  index          Int       @unique
+  divider_before String?
+  Chapter        Chapter[]
 }
 
 model Chapter {
