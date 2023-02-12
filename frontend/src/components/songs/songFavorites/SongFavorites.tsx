@@ -2,6 +2,7 @@ import { Box } from '@mui/material'
 import React from 'react'
 import { onlineListStores } from '../../../store'
 import { useAppDispatch } from '../../../store/hooks'
+import { setCurrentSongsFav } from '../../../store/songFavorites/songFavoritesAPI'
 import { SongFavorite } from '../../../store/songFavorites/songFavoritesReducer'
 import { setCurrentSong } from '../../../store/songs/songsAPI'
 import useContextMenuWithItem from '../../../utils/hooks/useContextMenuWithItem'
@@ -16,7 +17,10 @@ const SongFavorites = () => {
     <Box display={'flex'} flexGrow={1}>
       <OnlineList
         reduxStoreName={onlineListStores.songFavorites}
-        onClick={songFav => dispatch(setCurrentSong(songFav.songId))}
+        onClick={songFav => {
+          dispatch(setCurrentSong(songFav.songId))
+          dispatch(setCurrentSongsFav(songFav))
+        }}
         onItemContextMenu={menuProps.handleContextMenu}
       />
       <SongFavoritesMenu {...menuProps} dispatch={dispatch} />

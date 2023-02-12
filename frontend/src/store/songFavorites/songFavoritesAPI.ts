@@ -15,6 +15,12 @@ export const addSongsFav = (
   setCurrentSongFavsToLocalStorage(getState())
 }
 
+export const setCurrentSongsFav = (
+  song: SongFavorite
+) => async (dispatch: AppDispatch) => {
+  dispatch(songFavoritesSlice.actions.setCurrent(song))
+}
+
 export const removeSongsFav = (
   songFav: SongFavorite
 ) => async (dispatch: AppDispatch, getState: () => RootState) => {

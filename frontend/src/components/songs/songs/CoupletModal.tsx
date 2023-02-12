@@ -81,16 +81,15 @@ const onSongFormSubmit: IOnSongFormSubmit = async (
       .from('Couplet')
       .select('id, index')
       .eq('song_id', values.songId)
-      .gte('index', values.index)
 
     if (error) {
       handleError(error)
       return
     }
 
-    coupletsToChangeIndexes = coupletsToChangeIndexes!.map(couplet => ({
+    coupletsToChangeIndexes = coupletsToChangeIndexes!.map((couplet, index) => ({
       ...couplet,
-      index: couplet.index + 1
+      index: index + 1 < values.index ? index + 1 : index + 2
     })).reverse();
 
     for await (const couplet of coupletsToChangeIndexes) {

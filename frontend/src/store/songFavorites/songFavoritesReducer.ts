@@ -23,6 +23,9 @@ export const songFavoritesSlice = createSlice({
     setItems(state, action: PayloadAction<SongFavorite[]>) {
       if (state.items !== action.payload) state.items = action.payload
     },
+    setCurrent(state, action: PayloadAction<SongFavorite>) {
+      state.currentId = action.payload.id
+    },
     addItem(state, action: PayloadAction<SongFavorite>) {
       state.items = [...state.items, action.payload]
     },
