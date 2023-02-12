@@ -13,6 +13,7 @@ RUN npm run build
 
 # ==== CONFIGURE =====
 FROM nginx:1.23.3-alpine as production
+LABEL app=quotewind
 ENV NODE_ENV production
 COPY --from=builder /app/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
