@@ -1,15 +1,13 @@
 import * as Yup from 'yup'
-import { Close, FormatLineSpacing } from '@mui/icons-material'
-import { Box, Button, IconButton, InputAdornment, Modal, Paper, Typography } from '@mui/material'
-import { Field, Formik, FormikConfig } from 'formik'
+import { FormatLineSpacing } from '@mui/icons-material'
+import { InputAdornment } from '@mui/material'
+import { Field } from 'formik'
 import { TextField } from 'formik-mui'
-import { useSnackbar } from 'notistack'
-import AddParameters from '../../../types/AddParameters'
-import { CenteredModalBox } from '../../StyledMUI'
 import { PostgrestError } from '@supabase/supabase-js'
-import { CoupletStyles, supabaseAPI, useSupabaseVerseStyles } from '../../../supabase/supabaseAPI'
+import { supabaseAPI, useSupabaseVerseStyles } from '../../../supabase/supabaseAPI'
 import { MuiColorInput } from 'mui-color-input'
-import useVerseStylesModal from './useVerseStylesModal'
+import useModalForm from '../../ModalForm/useModalForm'
+import ModalForm, { OnFormSubmit } from '../../ModalForm/ModalForm'
 
 const VerseStylesSchema = Yup.object().shape({
   lineHeight: Yup.number()
@@ -23,19 +21,13 @@ const VerseStylesSchema = Yup.object().shape({
     .required('Необходимо заполнить'),
 })
 
-type IOnCoupletStylesFormSubmit = AddParameters<
-  AddParameters<
-    FormikConfig<CoupletStyles>['onSubmit'], 
-    [ReturnType<typeof useSnackbar>['enqueueSnackbar']]
-  >,
-  [ReturnType<typeof useVerseStylesModal>['handleModalClose']]
->
-
 const errCodes = [
   ['23505', 'Ошибка 23505']
 ]
 
-const onVerseStylesFormSubmit: IOnCoupletStylesFormSubmit = async (
+const onVerseStylesFormSubmit: OnFormSubmit<
+  ReturnType<typeof useSupabaseVerseStyles>['verseStyles']
+> = async (
   values, 
   actions, 
   enqueueSnackbar,
@@ -59,133 +51,61 @@ const onVerseStylesFormSubmit: IOnCoupletStylesFormSubmit = async (
   handleModalClose()
 }
 
-const VerseStylesModal = ({
-  enqueueSnackbar,
-  handleModalClose,
-  handleModalOpen,
-  curState,
-  modalOpen,
-  theme
-}: ReturnType<typeof useVerseStylesModal> & {
+const VerseStylesModal = (props: ReturnType<typeof useModalForm> & {
   curState: ReturnType<typeof useSupabaseVerseStyles>['verseStyles']
 }) => {
   return (
-    <Modal open={modalOpen} onClose={handleModalClose} >
-      <CenteredModalBox>
-        <Paper elevation={1} sx={{minWidth: '600px'}} >
-          <Box 
-            sx={{
-              backgroundColor: theme.palette.primary.main,
-              color: theme.palette.primary.contrastText,
-              borderTopLeftRadius: 'inherit',
-              borderTopRightRadius: 'inherit',
-              padding: theme.spacing(1, 2),
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between'
+    <ModalForm
+      {...props}
+      schema={VerseStylesSchema}
+      modalName={'Стиль стиха'}
+      onFormSubmit={onVerseStylesFormSubmit}
+    >
+      {({ values, setFieldValue, errors }) => (
+        <>
+          <Field
+            component={TextField}
+            name="lineHeight"
+            label="Межстрочный интервал"
+            size='small'
+            variant="filled"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <FormatLineSpacing />
+                </InputAdornment>
+              ) 
             }}
-          >
-            <Typography variant='h6' component='h2' textAlign={'center'}>
-              Стили куплета
-            </Typography>
-            <IconButton 
-              sx={{ color: theme.palette.primary.contrastText }}
-              onClick={handleModalClose}
-            >
-              <Close />
-            </IconButton>
-          </Box>
-          <Box padding={2}>
-            <Formik
-              initialValues={curState}
-              onSubmit={
-                (values, actions) => {
-                  onVerseStylesFormSubmit(
-                    values, 
-                    actions, 
-                    enqueueSnackbar,
-                    handleModalClose
-                  )
-                }
-              }
-              validationSchema={VerseStylesSchema}
-            >
-              {({ submitForm, values, setFieldValue, errors }) => (
-                <Box 
-                  display={'flex'}
-                  flexDirection={'column'} 
-                  gap={1}
-                  onKeyUp={(e) => {
-                    if (e.ctrlKey && e.key === 'Enter') {
-                      submitForm()
-                      e.stopPropagation()
-                    }
-                  }}
-                >
-                  <Field
-                    component={TextField}
-                    name="lineHeight"
-                    label="Межстрочный интервал"
-                    size='small'
-                    variant="filled"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position='start'>
-                          <FormatLineSpacing />
-                        </InputAdornment>
-                      ) 
-                    }}
-                  />
-                  <MuiColorInput
-                    size='small'
-                    variant='filled'
-                    label='Основной цвет'
-                    name='color'
-                    value={values.color ?? '#ffffffff'}
-                    onChange={(_, colors) => {
-                      setFieldValue('color', colors.hex8)
-                    }}
-                    error={!!errors.color}
-                    helperText={errors.color}
-                    format={'hex8'}
-                  />
-                  <MuiColorInput
-                    size='small'
-                    variant='filled'
-                    label='Цвет фона'
-                    name='backgroundColor'
-                    value={values.backgroundColor ?? '#ffffffff'}
-                    onChange={(_, colors) => {
-                      setFieldValue('backgroundColor', colors.hex8)
-                    }}
-                    error={!!errors.backgroundColor}
-                    helperText={errors.backgroundColor}
-                    format={'hex8'}
-                  />
-                  <Box display={'flex'} gap={1} justifyContent={'flex-end'} marginTop={2}>
-                    <Button
-                      title='Сохранить (ctrl + enter)'
-                      variant="contained"
-                      color="secondary"
-                      onClick={submitForm}
-                    >
-                      Сохранить
-                    </Button>
-                    <Button
-                      title='Отменить (esc)'
-                      variant='outlined'
-                      onClick={handleModalClose}
-                    >
-                      Отменить
-                    </Button>
-                  </Box>
-                </Box>
-              )}
-            </Formik>
-          </Box>
-        </Paper>
-      </CenteredModalBox>
-    </Modal>
+          />
+          <MuiColorInput
+            size='small'
+            variant='filled'
+            label='Основной цвет'
+            name='color'
+            value={values.color ?? '#ffffffff'}
+            onChange={(_, colors) => {
+              setFieldValue('color', colors.hex8)
+            }}
+            error={!!errors.color}
+            helperText={errors.color}
+            format={'hex8'}
+          />
+          <MuiColorInput
+            size='small'
+            variant='filled'
+            label='Цвет фона'
+            name='backgroundColor'
+            value={values.backgroundColor ?? '#ffffffff'}
+            onChange={(_, colors) => {
+              setFieldValue('backgroundColor', colors.hex8)
+            }}
+            error={!!errors.backgroundColor}
+            helperText={errors.backgroundColor}
+            format={'hex8'}
+          />
+        </>
+      )}
+    </ModalForm>
   )
 }
 

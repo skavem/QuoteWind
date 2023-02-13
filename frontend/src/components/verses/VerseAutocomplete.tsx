@@ -20,11 +20,11 @@ const findAndSetVerses = async (
     return []
   }
 
-  if (/[А-Яа-я]+\s\d+:\d+/gi.test(debouncedInput)) {
+  if (/[А-Яа-я\d\s]+\s\d+:\d+/gi.test(debouncedInput)) {
     const splitInput = debouncedInput.split(' ')
-    const bookName = splitInput[0]
-    const chapterIndex = +splitInput[1].split(':')[0]
-    const verseIndex = +splitInput[1].split(':')[1]
+    const bookName = splitInput.slice(0, -1).join(' ')
+    const chapterIndex = +splitInput.slice(-1)[0].split(':')[0]
+    const verseIndex = +splitInput.slice(-1)[0].split(':')[1]
 
     const { data: books } = await supabase
       .from('Book')
@@ -36,27 +36,46 @@ const findAndSetVerses = async (
     const { data: chapters } = await supabase
       .from('Chapter')
       .select('id')
-      .eq('book_id', books[0].id)
+      .in('book_id', books.map(book => book.id))
       .eq('index', chapterIndex)
 
     if (!chapters || chapters.length === 0) return []
 
     const { data: verses } = await supabase
       .from('Verse')
-      .select('id, text')
-      .eq('chapter_id', chapters[0].id)
+      .select(`id, text, index, chapter_id (
+        chapterId:id, chapterIndex:index, book_id (
+          bookId:id, bookName:name
+        )
+      )`)
+      .in('chapter_id', chapters.map(chapter => chapter.id))
       .eq('index', verseIndex)
 
     if (!verses || verses.length === 0) return []
 
-    return [{
-      id: verses[0].id,
-      bookId: books[0].id,
-      chapterId: chapters[0].id,
-      verseId: verses[0].id,
-      data: verses[0].text,
-      mark: `${books[0].name} ${chapterIndex}:${verseIndex}`
-    } as SearchedVerse]
+    console.log(verses)
+
+    return verses
+      .filter((verse): verse is {
+        id: number, text: string, index: number, chapter_id: {
+          chapterId: number, chapterIndex: number, book_id: {
+            bookId: number, bookName: string
+          }
+        }
+      } => {
+        return true
+      }).map((verse) => (
+        {
+          id: verse.id,
+          bookId: verse.chapter_id.book_id.bookId,
+          chapterId: verse.chapter_id.chapterId,
+          verseId: verse.id,
+          data: verse.text,
+          mark: `${
+            verse.chapter_id.book_id.bookName
+          } ${verse.chapter_id.chapterIndex}:${verse.index}`
+        } as SearchedVerse
+      )) 
   }
 
   const { data: verses, error } = await supabase

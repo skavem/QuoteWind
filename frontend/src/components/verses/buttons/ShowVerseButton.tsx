@@ -5,9 +5,9 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { onlineListStores } from '../../../store'
 import useObtainHistoryVerse from '../useObtainHistoryVerse'
 import { SupabaseReduxAPI } from '../../../supabase/supabaseReduxAPI'
-import useVerseStylesModal from './useVerseStylesModal'
 import VerseStylesModal from './VerseStylesModal'
 import { useSupabaseVerseStyles } from '../../../supabase/supabaseAPI'
+import useModalForm from '../../ModalForm/useModalForm'
 
 const ShowVerseButton = () => {
   const { currentId: currentVerseId } = useAppSelector(state => state[onlineListStores.verses])
@@ -17,7 +17,7 @@ const ShowVerseButton = () => {
   const currentCoupletId = useAppSelector(state => state[onlineListStores.couplets].currentId)
   const shownCoupletId = useAppSelector(state => state.shown.currentCoupletId)
 
-  const stylesModalProps = useVerseStylesModal()
+  const stylesModalProps = useModalForm()
   const verseStyles = useSupabaseVerseStyles()
 
   const anchorRef = useRef<HTMLDivElement>(null)
@@ -47,7 +47,7 @@ const ShowVerseButton = () => {
         </Button>
         <Button
           size='small'
-          onClick={() => stylesModalProps.handleModalOpen()}
+          onClick={() => stylesModalProps.handleOpen()}
         >
           <Brush />
         </Button>
