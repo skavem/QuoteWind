@@ -4,10 +4,10 @@ import { ArrowDropDown, Brush, Piano, PianoOff, Visibility, VisibilityOff } from
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { onlineListStores } from '../../../store'
 import useObtainHistoryVerse from '../useObtainHistoryVerse'
-import { SupabaseReduxAPI } from '../../../supabase/supabaseReduxAPI'
 import VerseStylesModal from './VerseStylesModal'
 import useModalForm from '../../ModalForm/useModalForm'
 import { defaultStyles } from '../../../store/shown/shownReducer'
+import { supabaseAPI } from '../../../supabase/supabaseAPI'
 
 const ShowVerseButton = () => {
   const { currentId: currentVerseId } = useAppSelector(state => state[onlineListStores.verses])
@@ -40,7 +40,7 @@ const ShowVerseButton = () => {
           variant='contained'
           startIcon={shownSelected ? <VisibilityOff /> : <Visibility />}
           onClick={() => {
-            SupabaseReduxAPI.showVerse(shownSelected ? null : historyVerse, dispatch)
+            supabaseAPI.showVerse(shownSelected ? null : historyVerse, dispatch)
           }}
         >
           {shownSelected ? 'Спрятать' : 'Показать'}
@@ -85,7 +85,7 @@ const ShowVerseButton = () => {
                 <MenuList id="split-button-menu" dense>
                   <MenuItem
                     onClick={() => {
-                      SupabaseReduxAPI.showVerse(shownVerseId ? null : historyVerse, dispatch)
+                      supabaseAPI.showVerse(shownVerseId ? null : historyVerse, dispatch)
                       handleCloseMenu()
                     }}
                   >
@@ -98,7 +98,7 @@ const ShowVerseButton = () => {
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      SupabaseReduxAPI.showCouplet(shownCoupletId ? null : currentCoupletId)
+                      supabaseAPI.showCouplet(shownCoupletId ? null : currentCoupletId)
                       handleCloseMenu()
                     }}
                   >

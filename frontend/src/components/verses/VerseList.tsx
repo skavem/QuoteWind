@@ -5,9 +5,9 @@ import OnlineList from '../OnlineList/OnlineList'
 import { setCurrentVerse, setNextVerseCurrent, setPreviousVerseCurrent } from '../../store/verses/versesAPI'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import VerseAutocomplete from './VerseAutocomplete'
-import { SupabaseReduxAPI } from '../../supabase/supabaseReduxAPI'
 import useObtainHistoryVerse from './useObtainHistoryVerse'
 import { useHotkeys } from '../../utils/hooks/useHotkeys'
+import { supabaseAPI } from '../../supabase/supabaseAPI'
 
 const VerseList = () => {
   const shownVerseId = useAppSelector(state => state.shown.currentVerseId)
@@ -20,10 +20,10 @@ const VerseList = () => {
     ArrowUp: (e) => {dispatch(setPreviousVerseCurrent())},
     ArrowDown: (e) => {dispatch(setNextVerseCurrent())},
     Enter: (e) => {
-      SupabaseReduxAPI.showVerse(historyVerse, dispatch)
+      supabaseAPI.showVerse(historyVerse, dispatch)
     },
     Escape: (e) => {
-      SupabaseReduxAPI.showVerse(null, dispatch)
+      supabaseAPI.showVerse(null, dispatch)
     }
   }, anyModalOpen)
 
@@ -36,10 +36,10 @@ const VerseList = () => {
         onClick={item => dispatch(setCurrentVerse(item.id))}
         onDoubleClick={item => {
           if (!historyVerse || shownVerseId === item.id) {
-            SupabaseReduxAPI.showVerse(null, dispatch)
+            supabaseAPI.showVerse(null, dispatch)
             return
           }
-          SupabaseReduxAPI.showVerse({ ...historyVerse, verseId: item.id }, dispatch)
+          supabaseAPI.showVerse({ ...historyVerse, verseId: item.id }, dispatch)
         }}
       />
     </Box>

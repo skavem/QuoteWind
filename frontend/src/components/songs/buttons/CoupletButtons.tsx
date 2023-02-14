@@ -3,11 +3,11 @@ import { Button, ButtonGroup, ClickAwayListener, Grow, ListItemIcon, ListItemTex
 import { ArrowDropDown, Brush, Comment, CommentsDisabled, Visibility, VisibilityOff } from '@mui/icons-material'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { onlineListStores } from '../../../store'
-import { SupabaseReduxAPI } from '../../../supabase/supabaseReduxAPI'
 import useObtainHistoryVerse from '../../verses/useObtainHistoryVerse'
 import CoupletStylesModal from './CoupletStylesModal'
 import useModalForm from '../../ModalForm/useModalForm'
 import { defaultStyles } from '../../../store/shown/shownReducer'
+import { supabaseAPI } from '../../../supabase/supabaseAPI'
 
 const CoupletButtons = () => {
   const currentCoupletId = useAppSelector(state => state[onlineListStores.couplets].currentId)
@@ -37,7 +37,7 @@ const CoupletButtons = () => {
           variant='contained'
           startIcon={shownSelected ? <VisibilityOff /> : <Visibility />}
           onClick={() => {
-            SupabaseReduxAPI.showCouplet(shownSelected ? null : currentCoupletId)
+            supabaseAPI.showCouplet(shownSelected ? null : currentCoupletId)
           }}
         >
           {shownSelected ? 'Спрятать' : 'Показать'}
@@ -87,7 +87,7 @@ const CoupletButtons = () => {
                 <MenuList id="split-button-menu" dense>
                   <MenuItem
                     onClick={() => {
-                      SupabaseReduxAPI.showCouplet(shownCoupletId ? null : currentCoupletId)
+                      supabaseAPI.showCouplet(shownCoupletId ? null : currentCoupletId)
                       handleCloseMenu()
                     }}
                   >
@@ -100,7 +100,7 @@ const CoupletButtons = () => {
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      SupabaseReduxAPI.showVerse(shownVerseId ? null : historyVerse, dispatch)
+                      supabaseAPI.showVerse(shownVerseId ? null : historyVerse, dispatch)
                       handleCloseMenu()
                     }}
                   >

@@ -8,7 +8,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import pageList from './pages'
 import PageLayout from './pages/PageLayout'
 import Login from './pages/login/Login'
-import { useSupabaseReduxSubscription } from './supabase/supabaseReduxAPI'
+import { useSupabaseReduxSubscription } from './supabase/supabaseAPI'
 
 function App() {
   useSupabaseReduxSubscription()

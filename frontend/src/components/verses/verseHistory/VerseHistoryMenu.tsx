@@ -1,12 +1,11 @@
-import React from 'react'
 import { NearMe, Visibility, Delete, DeleteSweep } from '@mui/icons-material'
 import { Divider, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import { setCurrentBook } from '../../../store/books/booksApi'
 import { removeHistoryVerse, clearHistoryVerses } from '../../../store/verseHistory/verseHistoryAPI'
-import { SupabaseReduxAPI } from '../../../supabase/supabaseReduxAPI'
 import useContextMenuWithItem from '../../../utils/hooks/useContextMenuWithItem'
 import { historyItem } from '../../../store/verseHistory/verseHistoryReducer'
 import { AppDispatch } from '../../../store'
+import { supabaseAPI } from '../../../supabase/supabaseAPI'
 
 type VerseHistoryMenuProps = {
   dispatch: AppDispatch
@@ -51,7 +50,7 @@ const VerseHistoryMenu = ({
           if (contextMenu?.item) {
             const item = contextMenu.item
             await dispatch(setCurrentBook(item.bookId, item.chapterId, item.verseId))
-            await SupabaseReduxAPI.showVerse(item, dispatch)
+            await supabaseAPI.showVerse(item, dispatch)
           }
           handleClose()
         }}

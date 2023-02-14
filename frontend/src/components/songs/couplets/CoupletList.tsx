@@ -5,7 +5,6 @@ import { deleteCouplet, setCouplets, setCurrentCouplet, setNextCoupletCurrent, s
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import OnlineList from '../../OnlineList/OnlineList'
 import CoupletAutcomplete from './CoupletAutcomplete'
-import { SupabaseReduxAPI } from '../../../supabase/supabaseReduxAPI'
 import CoupletModal from '../songs/CoupletModal'
 import useCoupletModal from '../useCoupletModal'
 import OnlineListMenu from '../songs/OnlineListMenu'
@@ -15,6 +14,7 @@ import { supabase } from '../../../supabase'
 import copyToClipboard from '../../../utils/copyToClipboardPolyfill'
 import { useHotkeys } from '../../../utils/hooks/useHotkeys'
 import { DBTables } from '../../../types/supabase-extended'
+import { supabaseAPI } from '../../../supabase/supabaseAPI'
 
 const CoupletList = () => {
   const shownCoupletId = useAppSelector(state => state.shown.currentCoupletId)
@@ -65,10 +65,10 @@ const CoupletList = () => {
     ArrowUp: (e) => {dispatch(setPreviousCoupletCurrent())},
     ArrowDown: (e) => {dispatch(setNextCoupletCurrent())},
     Enter: (e) => {
-      SupabaseReduxAPI.showCouplet(currentCoupletId)
+      supabaseAPI.showCouplet(currentCoupletId)
     },
     Escape: (e) => {
-      SupabaseReduxAPI.showCouplet(null)
+      supabaseAPI.showCouplet(null)
     }
   }, anyModalOpen)
 
@@ -86,7 +86,7 @@ const CoupletList = () => {
         reduxStoreName={onlineListStores.couplets}
         onClick={item => dispatch(setCurrentCouplet(item.id))}
         shownItemId={shownCoupletId}
-        onDoubleClick={item => SupabaseReduxAPI.showCouplet(
+        onDoubleClick={item => supabaseAPI.showCouplet(
           item.id === shownCoupletId ? null : item.id
         )}
         onItemContextMenu={menuProps.handleContextMenu}
