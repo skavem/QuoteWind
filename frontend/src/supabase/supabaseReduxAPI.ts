@@ -21,6 +21,7 @@ export const useSupabaseReduxSubscription = () => {
       const { data: states } = await supabase.from('State').select()
       if (states) {
         dispatch(setShownVerse(states[0]['verse_id']))
+        dispatch(setShownCouplet(states[0]['couplet_id']))
       }
 
       const { data: songs } = await supabase.from('Song').select()
