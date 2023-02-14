@@ -1,6 +1,6 @@
 import * as Yup from 'yup'
 import { Bookmark, Notes } from '@mui/icons-material'
-import { InputAdornment } from '@mui/material'
+import { Button, ButtonGroup, InputAdornment } from '@mui/material'
 import { Field, FormikConfig } from 'formik'
 import { TextField } from 'formik-mui'
 import { useSnackbar } from 'notistack'
@@ -130,7 +130,7 @@ const CoupletModal = (props: ReturnType<typeof useCoupletModal>) => {
       onFormSubmit={onSongFormSubmit}
       schema={SongSchema}
     >
-      {(props) => (
+      {({ setFieldValue }) => (
         <>
           <Field
             component={TextField}
@@ -143,7 +143,23 @@ const CoupletModal = (props: ReturnType<typeof useCoupletModal>) => {
                 <InputAdornment position='start'>
                   <Bookmark />
                 </InputAdornment>
-              ) 
+              ),
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <ButtonGroup size='small'>
+                    <Button
+                      onClick={(e) => setFieldValue('label', 'Куплет')}
+                    >
+                      Куплет
+                    </Button>
+                    <Button 
+                      onClick={(e) => setFieldValue('label', 'Припев')}
+                    >
+                      Припев
+                    </Button>
+                  </ButtonGroup>
+                </InputAdornment>
+              ),
             }}
           />
           <Field
@@ -160,8 +176,9 @@ const CoupletModal = (props: ReturnType<typeof useCoupletModal>) => {
                 <InputAdornment position='start'>
                   <Notes />
                 </InputAdornment>
-              ) 
+              )
             }}
+            sx={{position: 'relative'}}
           />
         </>
       )}
