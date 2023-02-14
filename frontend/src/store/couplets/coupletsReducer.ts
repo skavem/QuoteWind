@@ -3,9 +3,14 @@ import { onlineListInitialState, onlineListDefaultItem } from "../../types/onlin
 
 export type Couplet = onlineListDefaultItem 
 
+export const currentCoupletLocalStorageName = 'Redux_couplet_current'
+const currentCoupletFromLocalStorage = JSON.parse(
+  String(localStorage.getItem(currentCoupletLocalStorageName))
+) as Couplet['id']
+
 const initialState: onlineListInitialState<Couplet> = {
   items: [],
-  currentId: null
+  currentId: currentCoupletFromLocalStorage
 }
 
 export const coupletsSlice = createSlice({

@@ -1,6 +1,10 @@
 import { AppDispatch, onlineListStores, RootState } from "..";
 import { DBTables } from "../../types/supabase-extended";
-import { Couplet, coupletsSlice } from "./coupletsReducer";
+import { Couplet, coupletsSlice, currentCoupletLocalStorageName } from "./coupletsReducer";
+
+const setCurrentCoupletToLocalStorage = (currentCoupletId: Couplet['id']) => {
+  localStorage.setItem(currentCoupletLocalStorageName, String(currentCoupletId))
+}
 
 export const setCouplets = (
   couplets: DBTables['Couplet']['Row'][],
@@ -14,6 +18,7 @@ export const setCouplets = (
       mark: couplet.label ?? undefined
     })) 
   dispatch(coupletsSlice.actions.setItems(transformedCouplets))
+
   if (transformedCouplets.length > 0) {
     await dispatch(setCurrentCouplet(coupletId ?? transformedCouplets[0].id))
   }
@@ -22,7 +27,9 @@ export const setCouplets = (
 export const setCurrentCouplet = (
   coupletId: Couplet['id']
 ) => async (dispatch: AppDispatch) => {
+  console.log(coupletId)
   dispatch(coupletsSlice.actions.setCurrent(coupletId))
+  setCurrentCoupletToLocalStorage(coupletId)
 }
 
 export const deleteCouplet = (

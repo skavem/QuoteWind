@@ -25,7 +25,7 @@ const useSongPagination = () => {
   useEffect(() => {
     updateCurrentPage()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSongId])
+  }, [currentSongId, songs])
 
   return { page, setPage, pagesCount, songsOnPage }
 }

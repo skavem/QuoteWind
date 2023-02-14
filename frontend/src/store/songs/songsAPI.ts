@@ -1,13 +1,17 @@
-import { AppDispatch } from ".."
+import { AppDispatch, onlineListStores, RootState } from ".."
 import { supabase } from "../../supabase"
 import { Database } from "../../types/supabase"
 import { DBTables } from "../../types/supabase-extended"
 import { setCouplets } from "../couplets/coupletsAPI"
-import { Song, songsSlice } from "./songsReducer"
+import { currentSongLocalStorageName, Song, songsSlice } from "./songsReducer"
+
+const setCurrentSongToLocalStorage = (currentSongId: Song['id']) => {
+  localStorage.setItem(currentSongLocalStorageName, String(currentSongId))
+}
 
 export const setSongs = (
   songs: Database['public']['Tables']['Song']['Row'][]
-) => async (dispatch: AppDispatch) => {
+) => async (dispatch: AppDispatch, getState: () => RootState) => {
   const normalizedSongs = songs
   .map<Song>(song => ({
     id: song.id,
@@ -20,7 +24,16 @@ export const setSongs = (
     return song1Mark - song2Mark
   })
   dispatch(songsSlice.actions.setItems(normalizedSongs))
-  await dispatch(setCurrentSong(normalizedSongs[0].id))
+
+  const currentId = getState()[onlineListStores.songs].currentId
+  if (!currentId) {
+    await dispatch(setCurrentSong(normalizedSongs[0].id))
+  } else {
+    await dispatch(setCurrentSong(
+      currentId,
+      getState()[onlineListStores.couplets].currentId
+    ))
+  }
 }
 
 export const setCurrentSong = (
@@ -35,6 +48,7 @@ export const setCurrentSong = (
   if (couplets) {
     await dispatch(setCouplets(couplets, coupletId))
   }
+  setCurrentSongToLocalStorage(songId)
 }
 
 export const updateSong = (

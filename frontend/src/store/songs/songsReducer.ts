@@ -3,9 +3,14 @@ import { onlineListInitialState, onlineListDefaultItem } from "../../types/onlin
 
 export type Song = onlineListDefaultItem & Required<Pick<onlineListDefaultItem, 'mark'>>
 
+export const currentSongLocalStorageName = 'Redux_song_current'
+const currentSongFromLocalStorage = JSON.parse(
+  String(localStorage.getItem(currentSongLocalStorageName))
+) as Song['id']
+
 const initialState: onlineListInitialState<Song> = {
   items: [],
-  currentId: null
+  currentId: currentSongFromLocalStorage
 }
 
 export const songsSlice = createSlice({
