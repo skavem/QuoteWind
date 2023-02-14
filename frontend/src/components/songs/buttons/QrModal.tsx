@@ -10,9 +10,7 @@ import { supabaseAPI } from '../../../supabase/supabaseAPI'
 import { MuiColorInput } from 'mui-color-input'
 import useModalForm from '../../ModalForm/useModalForm'
 import ModalForm from '../../ModalForm/ModalForm'
-import { QrStyles as QrState } from '../../../store/shown/shownReducer'
-
-type QRStyles = Omit<QrState, 'shown'>
+import { QrStyles } from '../../../store/shown/shownReducer'
 
 const QRSchema = Yup.object().shape({
   data: Yup.string()
@@ -30,7 +28,7 @@ const QRSchema = Yup.object().shape({
 
 type OnQrFormSubmit = AddParameters<
   AddParameters<
-    FormikConfig<QRStyles>['onSubmit'], 
+    FormikConfig<QrStyles>['onSubmit'], 
     [ReturnType<typeof useSnackbar>['enqueueSnackbar']]
   >,
   [ReturnType<typeof useModalForm>['handleClose']]
@@ -65,7 +63,7 @@ const onQrFormSubmit: OnQrFormSubmit = async (
 }
 
 const QrModal = (props: ReturnType<typeof useModalForm> & {
-  curState: QRStyles
+  curState: QrStyles
 }) => {
   return (
     <ModalForm

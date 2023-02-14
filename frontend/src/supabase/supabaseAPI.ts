@@ -1,35 +1,32 @@
 import { supabase } from "."
+import { CoupletStyles, defaultStyles, QrStyles, Styles, VerseStyles } from "../store/shown/shownReducer"
 import { Json } from "../types/supabase"
-
-type QrStyles = {
-  data?: string,
-  shown?: boolean,
-  size?: number,
-  bgColor?: string,
-  fgColor?: string
-}
-
-type CoupletStyles = {
-  lineHeight?: number,
-  backgroundColor?: string,
-  color?: string
-}
-
-type VerseStyles = {
-  lineHeight?: number,
-  backgroundColor?: string,
-  color?: string
-}
-
-type Styles = {
-  qr?: QrStyles
-  couplet?: CoupletStyles
-}
 
 export const isValidObject = (data: Json | undefined): data is {
   [key: string]: Json;
 } => {
   return !!(data && typeof data === 'object' && !Array.isArray(data))
+}
+
+export const isValidQrStylesObject = (data: Json): data is QrStyles => {
+  return isValidObject(data) 
+    && 'data' in data && typeof data.data === 'string' 
+    && 'shown' in data && typeof data.shown === 'boolean'
+    && 'size' in data && typeof data.size === 'number'
+    && 'bgColor' in data && typeof data.bgColor === 'string'
+    && 'fgColor' in data && typeof data.fgColor === 'string'
+}
+export const isValidCoupletStylesObject = (data: Json): data is CoupletStyles => {
+  return isValidObject(data)
+    && 'lineHeight' in data && typeof data.lineHeight === 'number' 
+    && 'backgroundColor' in data && typeof data.backgroundColor === 'string'
+    && 'color' in data && typeof data.color === 'string'
+}
+export const isValidVerseStylesObject = (data: Json): data is VerseStyles => {
+  return isValidObject(data)
+    && 'lineHeight' in data && typeof data.lineHeight === 'number' 
+    && 'backgroundColor' in data && typeof data.backgroundColor === 'string'
+    && 'color' in data && typeof data.color === 'string'
 }
 
 export const supabaseAPI = {
@@ -43,11 +40,7 @@ export const supabaseAPI = {
     if (!data) return null
     const styles = data.styles
     if (isValidObject(styles)) {
-      return styles as {
-        qr?: QrStyles,
-        couplet?: CoupletStyles,
-        verse?: VerseStyles
-      }
+      return styles as Styles
     }
     return null
   },
@@ -69,16 +62,10 @@ export const supabaseAPI = {
 
   async setQrStyles(qrStyles: QrStyles) {
     let styles = await this.getStyles()
-    if (styles) {
-      if (styles.qr) {
-        styles.qr = { ...styles.qr, ...qrStyles }
-      } else {
-        styles.qr = qrStyles
-      }
-    } else {
-      styles = { qr: qrStyles }
+    if (!isValidQrStylesObject(styles)) {
+      return await this.setStyles({...defaultStyles, qr: qrStyles})
     }
-    return await this.setStyles(styles)
+    return await this.setStyles({...styles, qr: qrStyles})
   },
 
   async getCoupletStyles() {
@@ -91,16 +78,10 @@ export const supabaseAPI = {
 
   async setCoupletStyles(coupletStyles: CoupletStyles) {
     let styles = await this.getStyles()
-    if (styles) {
-      if (styles.couplet) {
-        styles.couplet = { ...styles.couplet, ...coupletStyles }
-      } else {
-        styles.couplet = coupletStyles
-      }
-    } else {
-      styles = { couplet: coupletStyles }
+    if (!isValidCoupletStylesObject(styles)) {
+      return await this.setStyles({ ...defaultStyles, couplet: coupletStyles })
     }
-    return await this.setStyles(styles)
+    return await this.setStyles({ ...styles, couplet: coupletStyles })
   },
 
   async getVerseStyles() {
@@ -113,15 +94,9 @@ export const supabaseAPI = {
 
   async setVerseStyles(verseStyles: VerseStyles) {
     let styles = await this.getStyles()
-    if (styles) {
-      if (styles.verse) {
-        styles.verse = { ...styles.verse, ...verseStyles }
-      } else {
-        styles.verse = verseStyles
-      }
-    } else {
-      styles = { verse: verseStyles }
+    if (!isValidVerseStylesObject(styles)) {
+      return await this.setStyles({ ...defaultStyles, verse: verseStyles })
     }
-    return await this.setStyles(styles)
+    return await this.setStyles({ ...styles, verse: verseStyles })
   }
 }

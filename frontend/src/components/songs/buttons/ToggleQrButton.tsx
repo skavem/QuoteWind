@@ -19,7 +19,7 @@ const ToggleQrButton = () => {
       >
         <Button
           onClick={() => supabaseAPI.setQrStyles(
-            qrStyles?.shown ? { shown: false } : { shown: true }
+            qrStyles ? { ...qrStyles, shown: !qrStyles.shown } : defaultStyles.qr
           )}
         >
           <QrCode sx={(theme) => ({
