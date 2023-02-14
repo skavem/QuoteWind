@@ -4,10 +4,11 @@ import { InputAdornment } from '@mui/material'
 import { Field } from 'formik'
 import { TextField } from 'formik-mui'
 import { PostgrestError } from '@supabase/supabase-js'
-import { supabaseAPI, useSupabaseVerseStyles } from '../../../supabase/supabaseAPI'
+import { supabaseAPI } from '../../../supabase/supabaseAPI'
 import { MuiColorInput } from 'mui-color-input'
 import useModalForm from '../../ModalForm/useModalForm'
 import ModalForm, { OnFormSubmit } from '../../ModalForm/ModalForm'
+import { VerseStyles } from '../../../store/shown/shownReducer'
 
 const VerseStylesSchema = Yup.object().shape({
   lineHeight: Yup.number()
@@ -26,7 +27,7 @@ const errCodes = [
 ]
 
 const onVerseStylesFormSubmit: OnFormSubmit<
-  ReturnType<typeof useSupabaseVerseStyles>['verseStyles']
+  VerseStyles
 > = async (
   values, 
   actions, 
@@ -52,7 +53,7 @@ const onVerseStylesFormSubmit: OnFormSubmit<
 }
 
 const VerseStylesModal = (props: ReturnType<typeof useModalForm> & {
-  curState: ReturnType<typeof useSupabaseVerseStyles>['verseStyles']
+  curState: VerseStyles
 }) => {
   return (
     <ModalForm

@@ -5,14 +5,14 @@ import { Field, FormikConfig } from 'formik'
 import { TextField } from 'formik-mui'
 import { useSnackbar } from 'notistack'
 import AddParameters from '../../../types/AddParameters'
-import useSongModal from '../useSongModal'
 import { PostgrestError } from '@supabase/supabase-js'
-import { supabaseAPI, useSupabaseQr } from '../../../supabase/supabaseAPI'
+import { supabaseAPI } from '../../../supabase/supabaseAPI'
 import { MuiColorInput } from 'mui-color-input'
 import useModalForm from '../../ModalForm/useModalForm'
 import ModalForm from '../../ModalForm/ModalForm'
+import { QrStyles as QrState } from '../../../store/shown/shownReducer'
 
-type QrStyles = Omit<ReturnType<typeof useSupabaseQr>['qrStyles'], 'shown'>
+type QRStyles = Omit<QrState, 'shown'>
 
 const QRSchema = Yup.object().shape({
   data: Yup.string()
@@ -30,7 +30,7 @@ const QRSchema = Yup.object().shape({
 
 type OnQrFormSubmit = AddParameters<
   AddParameters<
-    FormikConfig<QrStyles>['onSubmit'], 
+    FormikConfig<QRStyles>['onSubmit'], 
     [ReturnType<typeof useSnackbar>['enqueueSnackbar']]
   >,
   [ReturnType<typeof useModalForm>['handleClose']]
@@ -65,12 +65,11 @@ const onQrFormSubmit: OnQrFormSubmit = async (
 }
 
 const QrModal = (props: ReturnType<typeof useModalForm> & {
-  curState: QrStyles
+  curState: QRStyles
 }) => {
   return (
     <ModalForm
       {...props}
-      curState={props.curState}
       modalName='Стиль QR'
       onFormSubmit={onQrFormSubmit}
       schema={QRSchema}

@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react"
 import { supabase } from "."
 import { Json } from "../types/supabase"
-import { StateRow } from "../types/supabase-extended"
 
-export type QrStyles = {
+type QrStyles = {
   data?: string,
   shown?: boolean,
   size?: number,
@@ -11,19 +9,19 @@ export type QrStyles = {
   fgColor?: string
 }
 
-export type CoupletStyles = {
+type CoupletStyles = {
   lineHeight?: number,
   backgroundColor?: string,
   color?: string
 }
 
-export type VerseStyles = {
+type VerseStyles = {
   lineHeight?: number,
   backgroundColor?: string,
   color?: string
 }
 
-export type Styles = {
+type Styles = {
   qr?: QrStyles
   couplet?: CoupletStyles
 }
@@ -126,112 +124,4 @@ export const supabaseAPI = {
     }
     return await this.setStyles(styles)
   }
-}
-
-export const useSupabaseQr = () => {
-  const [qrShown, setQrShown] = useState(false)
-  const [qrStyles, setQrStyles] = useState<QrStyles>({})
-
-  useEffect(() => {
-    (async () => {
-      const styles = await supabaseAPI.getQrStyles()
-      if (styles && 'data' in styles && 'shown' in styles) {
-        setQrStyles(styles)
-        setQrShown(styles.shown as boolean && styles.data !== '')
-      }
-    })();
-
-    const subscription = supabase
-      .channel('public:QrState')
-      .on<StateRow>(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'State' },
-        payload => {
-          if (
-            isValidObject(payload.new.styles) && isValidObject(payload.new.styles.qr)
-          ) {
-            const qrStyles = payload.new.styles.qr
-            setQrStyles(qrStyles)
-            setQrShown(qrStyles.shown as boolean && qrStyles.data !== '')
-          }
-        }
-      )
-      .subscribe()
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [setQrStyles, setQrShown])
-
-  return { qrShown, qrStyles }
-}
-
-export const useSupabaseCoupletStyles = () => {
-  const [coupletStyles, setCoupletStyles] = useState<CoupletStyles>({})
-
-  useEffect(() => {
-    (async () => {
-      const styles = await supabaseAPI.getCoupletStyles()
-      if (styles) {
-        setCoupletStyles(styles)
-      }
-    })();
-
-    const subscription = supabase
-      .channel('public:CoupletState')
-      .on<StateRow>(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'State' },
-        payload => {
-          if (
-            isValidObject(payload.new.styles) && isValidObject(payload.new.styles.couplet)
-          ) {
-            const coupletStyles = payload.new.styles.couplet
-            setCoupletStyles(coupletStyles)
-          }
-        }
-      )
-      .subscribe()
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [setCoupletStyles])
-
-  return { coupletStyles }
-}
-
-export const useSupabaseVerseStyles = () => {
-  const [verseStyles, setVerseStyles] = useState<CoupletStyles>({})
-
-  useEffect(() => {
-    (async () => {
-      const styles = await supabaseAPI.getVerseStyles()
-      if (styles) {
-        setVerseStyles(styles)
-      }
-    })();
-
-    const subscription = supabase
-      .channel('public:VerseState')
-      .on<StateRow>(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'State' },
-        payload => {
-          if (
-            isValidObject(payload.new.styles) && isValidObject(payload.new.styles.verse)
-          ) {
-            const verseStyles = payload.new.styles.verse
-            setVerseStyles(verseStyles)
-          }
-        }
-      )
-      .subscribe()
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [setVerseStyles])
-
-  return { verseStyles }
 }

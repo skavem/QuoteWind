@@ -1,11 +1,13 @@
 import { Brush, QrCode } from '@mui/icons-material'
 import { Button, ButtonGroup } from '@mui/material'
-import { supabaseAPI, useSupabaseQr } from '../../../supabase/supabaseAPI'
+import { useAppSelector } from '../../../store/hooks'
+import { defaultStyles } from '../../../store/shown/shownReducer'
+import { supabaseAPI } from '../../../supabase/supabaseAPI'
 import useModalForm from '../../ModalForm/useModalForm'
 import QrModal from './QrModal'
 
 const ToggleQrButton = () => {
-  const { qrShown, qrStyles } = useSupabaseQr()
+  const qrStyles = useAppSelector(state => state.shown.styles?.qr)
   const modalProps = useModalForm()
 
   return (
@@ -17,18 +19,18 @@ const ToggleQrButton = () => {
       >
         <Button
           onClick={() => supabaseAPI.setQrStyles(
-            qrShown ? { shown: false } : { shown: true }
+            qrStyles?.shown ? { shown: false } : { shown: true }
           )}
         >
           <QrCode sx={(theme) => ({
-            color: qrShown ? 'primary' : theme.palette.grey[500]
+            color: qrStyles?.shown ? 'primary' : theme.palette.grey[500]
           })} />
         </Button>
         <Button onClick={() => modalProps.handleOpen()}>
           <Brush />
         </Button>
       </ButtonGroup>
-      <QrModal {...modalProps} curState={qrStyles} />
+      <QrModal {...modalProps} curState={qrStyles ?? defaultStyles.qr} />
     </>
   )
 }

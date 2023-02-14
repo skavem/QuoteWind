@@ -2,12 +2,13 @@ import {  useEffect } from "react";
 import { DBTables, StateRow } from '../types/supabase-extended'
 import { useAppDispatch } from "../store/hooks";
 import { setBooks } from "../store/books/booksApi";
-import { setShownCouplet, setShownVerse } from "../store/shown/shownAPI";
+import { setShownCouplet, setShownVerse, setStyles } from "../store/shown/shownAPI";
 import { supabase } from ".";
 import { historyItem } from "../store/verseHistory/verseHistoryReducer";
 import { AppDispatch } from "../store";
 import { addHistoryVerse } from "../store/verseHistory/verseHistoryAPI";
 import { addSong, deleteSong, setSongs, updateSong } from "../store/songs/songsAPI";
+import { Styles } from "../store/shown/shownReducer";
 
 export const useSupabaseReduxSubscription = () => {
   const dispatch = useAppDispatch()
@@ -18,10 +19,11 @@ export const useSupabaseReduxSubscription = () => {
       if (books) {
         dispatch(setBooks(books))
       }
-      const { data: states } = await supabase.from('State').select()
-      if (states) {
-        dispatch(setShownVerse(states[0]['verse_id']))
-        dispatch(setShownCouplet(states[0]['couplet_id']))
+      const { data: state } = await supabase.from('State').select().single()
+      if (state) {
+        dispatch(setShownVerse(state['verse_id']))
+        dispatch(setShownCouplet(state['couplet_id']))
+        dispatch(setStyles(state['styles'] as Styles))
       }
 
       const { data: songs } = await supabase.from('Song').select()
@@ -38,6 +40,7 @@ export const useSupabaseReduxSubscription = () => {
         payload => {
           dispatch(setShownVerse(payload.new.verse_id))
           dispatch(setShownCouplet(payload.new.couplet_id))
+          dispatch(setStyles(payload.new.styles as Styles))
         }
       )
       .subscribe()

@@ -1,5 +1,5 @@
 import { Grid, Box, Stack } from '@mui/material'
-import ShowVerseButton from '../../components/verses/buttons/ShowVerseButton'
+import ShowVerseButton from '../../components/verses/buttons/VerseButtons'
 import BookList from '../../components/verses/BookList'
 import ChapterList from '../../components/verses/ChapterList'
 import VerseList from '../../components/verses/VerseList'

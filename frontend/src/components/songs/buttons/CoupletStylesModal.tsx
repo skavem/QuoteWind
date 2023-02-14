@@ -6,10 +6,11 @@ import { TextField } from 'formik-mui'
 import { useSnackbar } from 'notistack'
 import AddParameters from '../../../types/AddParameters'
 import { PostgrestError } from '@supabase/supabase-js'
-import { CoupletStyles, supabaseAPI, useSupabaseCoupletStyles } from '../../../supabase/supabaseAPI'
+import { supabaseAPI } from '../../../supabase/supabaseAPI'
 import { MuiColorInput } from 'mui-color-input'
 import ModalForm from '../../ModalForm/ModalForm'
 import useModalForm from '../../ModalForm/useModalForm'
+import { CoupletStyles } from '../../../store/shown/shownReducer'
 
 const CoupletStylesSchema = Yup.object().shape({
   lineHeight: Yup.number()
@@ -60,7 +61,7 @@ const onCoupletStylesFormSubmit: IOnCoupletStylesFormSubmit = async (
 }
 
 const CoupletStylesModal = (props: ReturnType<typeof useModalForm> & {
-  curState: ReturnType<typeof useSupabaseCoupletStyles>['coupletStyles']
+  curState: CoupletStyles
 }) => {
   return (
     <ModalForm 

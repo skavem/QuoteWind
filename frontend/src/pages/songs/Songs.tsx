@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material'
 import CoupletList from '../../components/songs/couplets/CoupletList'
-import CurrentCoupletButton from '../../components/songs/buttons/ShowCoupletButton'
+import CurrentCoupletButton from '../../components/songs/buttons/CoupletButtons'
 import SongFavorites from '../../components/songs/songFavorites/SongFavorites'
 import SongsList from '../../components/songs/songs/SongList'
 import ToggleQrButton from '../../components/songs/buttons/ToggleQrButton'

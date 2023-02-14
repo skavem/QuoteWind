@@ -1,24 +1,25 @@
-import { useRef, useState, useCallback } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { Button, ButtonGroup, ClickAwayListener, Grow, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Popper } from '@mui/material'
-import { ArrowDropDown, Brush, Piano, PianoOff, Visibility, VisibilityOff } from '@mui/icons-material'
+import { ArrowDropDown, Brush, Comment, CommentsDisabled, Visibility, VisibilityOff } from '@mui/icons-material'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { onlineListStores } from '../../../store'
-import useObtainHistoryVerse from '../useObtainHistoryVerse'
 import { SupabaseReduxAPI } from '../../../supabase/supabaseReduxAPI'
-import VerseStylesModal from './VerseStylesModal'
-import { useSupabaseVerseStyles } from '../../../supabase/supabaseAPI'
+import useObtainHistoryVerse from '../../verses/useObtainHistoryVerse'
+import CoupletStylesModal from './CoupletStylesModal'
 import useModalForm from '../../ModalForm/useModalForm'
+import { defaultStyles } from '../../../store/shown/shownReducer'
 
-const ShowVerseButton = () => {
-  const { currentId: currentVerseId } = useAppSelector(state => state[onlineListStores.verses])
-  const shownVerseId = useAppSelector(state => state.shown.currentVerseId)
-  const shownSelected = currentVerseId === shownVerseId
-
+const CoupletButtons = () => {
   const currentCoupletId = useAppSelector(state => state[onlineListStores.couplets].currentId)
   const shownCoupletId = useAppSelector(state => state.shown.currentCoupletId)
+  const shownSelected = currentCoupletId === shownCoupletId
 
-  const stylesModalProps = useModalForm()
-  const verseStyles = useSupabaseVerseStyles()
+  const coupletStylesModalProps = useModalForm()
+  const coupletStyles = useAppSelector(state => state.shown.styles?.couplet)
+
+  const shownVerseId = useAppSelector(state => state.shown.currentVerseId)
+  const historyVerse = useObtainHistoryVerse()
+  const dispatch = useAppDispatch()
 
   const anchorRef = useRef<HTMLDivElement>(null)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -29,25 +30,21 @@ const ShowVerseButton = () => {
     setMenuOpen(false)
   }, [setMenuOpen])
 
-  const historyVerse = useObtainHistoryVerse()
-
-  const dispatch = useAppDispatch()
-
   return (
     <>
       <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
-        <Button 
+        <Button
           variant='contained'
           startIcon={shownSelected ? <VisibilityOff /> : <Visibility />}
           onClick={() => {
-            SupabaseReduxAPI.showVerse(shownSelected ? null : historyVerse, dispatch)
+            SupabaseReduxAPI.showCouplet(shownSelected ? null : currentCoupletId)
           }}
         >
           {shownSelected ? 'Спрятать' : 'Показать'}
         </Button>
         <Button
           size='small'
-          onClick={() => stylesModalProps.handleOpen()}
+          onClick={() => coupletStylesModalProps.handleOpen()}
         >
           <Brush />
         </Button>
@@ -62,7 +59,12 @@ const ShowVerseButton = () => {
           <ArrowDropDown />
         </Button>
       </ButtonGroup>
-      <VerseStylesModal {...stylesModalProps} curState={verseStyles.verseStyles} />
+
+      <CoupletStylesModal 
+        {...coupletStylesModalProps} 
+        curState={coupletStyles ?? defaultStyles.couplet}
+      />
+
       <Popper
         sx={{
           zIndex: 1,
@@ -85,28 +87,28 @@ const ShowVerseButton = () => {
                 <MenuList id="split-button-menu" dense>
                   <MenuItem
                     onClick={() => {
-                      SupabaseReduxAPI.showVerse(shownVerseId ? null : historyVerse, dispatch)
-                      handleCloseMenu()
-                    }}
-                  >
-                    <ListItemIcon>
-                      {shownVerseId ? <VisibilityOff /> : <Visibility />}
-                    </ListItemIcon>
-                    <ListItemText>
-                      {shownVerseId ? 'Спрятать отображаемый' : 'Показать выбранный'}
-                    </ListItemText>
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => {
                       SupabaseReduxAPI.showCouplet(shownCoupletId ? null : currentCoupletId)
                       handleCloseMenu()
                     }}
                   >
                     <ListItemIcon>
-                      {shownCoupletId ? <PianoOff /> : <Piano />}
+                      {shownCoupletId ? <VisibilityOff /> : <Visibility />}
                     </ListItemIcon>
                     <ListItemText>
-                      {shownCoupletId ? 'Спрятать куплет' : 'Показать куплет'}
+                      {shownCoupletId ? 'Спрятать отображаемый' : 'Показать выбранный'}
+                    </ListItemText>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      SupabaseReduxAPI.showVerse(shownVerseId ? null : historyVerse, dispatch)
+                      handleCloseMenu()
+                    }}
+                  >
+                    <ListItemIcon>
+                      {shownVerseId ? <CommentsDisabled /> : <Comment />}
+                    </ListItemIcon>
+                    <ListItemText>
+                      {shownVerseId ? 'Спрятать стих' : 'Показать стих'}
                     </ListItemText>
                   </MenuItem>
                 </MenuList>
@@ -119,4 +121,4 @@ const ShowVerseButton = () => {
   )
 }
 
-export default ShowVerseButton
+export default CoupletButtons

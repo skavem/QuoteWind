@@ -27,7 +27,6 @@ export const setCouplets = (
 export const setCurrentCouplet = (
   coupletId: Couplet['id']
 ) => async (dispatch: AppDispatch) => {
-  console.log(coupletId)
   dispatch(coupletsSlice.actions.setCurrent(coupletId))
   setCurrentCoupletToLocalStorage(coupletId)
 }
