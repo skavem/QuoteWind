@@ -112,7 +112,7 @@ const CoupletList = () => {
             icon: Edit,
             text: 'Изменить',
             async onClick(item) {
-              modalProps.handleModalOpen(item, songId!)
+              modalProps.handleOpen(item, songId!)
             },
             shown: item => !!item
           },
@@ -132,7 +132,7 @@ const CoupletList = () => {
             async onClick(item) {
               if (item) {
                 const indexAfter = couplets.findIndex(couplet => couplet.id === item.id) + 1
-                modalProps.handleModalOpen(null, songId!, indexAfter)
+                modalProps.handleOpen(null, songId!, indexAfter)
               }
             },
             shown: item => !!item
@@ -143,7 +143,7 @@ const CoupletList = () => {
             async onClick(item) {
               if (item) {
                 const indexAfter = couplets.findIndex(couplet => couplet.id === item.id) + 2
-                modalProps.handleModalOpen(null, songId!, indexAfter)
+                modalProps.handleOpen(null, songId!, indexAfter)
               }
             },
             shown: item => !!item,
@@ -153,7 +153,7 @@ const CoupletList = () => {
             icon: PlaylistAdd,
             text: 'Добавить в конец',
             async onClick(item) {
-              modalProps.handleModalOpen(null, songId!)
+              modalProps.handleOpen(null, songId!)
             }
           }
         ]}

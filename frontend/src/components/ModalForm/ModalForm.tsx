@@ -20,12 +20,12 @@ export type OnFormSubmit<T extends ModalFormObject> = AddParameters<
 >
 
 const ModalForm = <T extends ModalFormObject,>({
-  enqueueSnackbar, handleClose, handleOpen,
+  enqueueSnackbar, handleClose,
   curState, isOpen, theme, schema, children, onFormSubmit,
   modalName
-}: ReturnType<typeof useModalForm> & {
+}: Omit<ReturnType<typeof useModalForm>, 'handleOpen'> & {
   curState: T,
-  schema: Yup.SchemaOf<T>,
+  schema: Yup.BaseSchema,
   children: (props: FormikProps<T>) => React.ReactNode,
   onFormSubmit: OnFormSubmit<T>,
   modalName: string

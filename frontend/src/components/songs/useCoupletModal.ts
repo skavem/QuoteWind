@@ -1,21 +1,20 @@
-import { useTheme } from "@mui/material"
-import { useSnackbar } from "notistack"
 import { useState } from "react"
 import { CoupletFields } from "./songs/CoupletModal"
 import { onlineListStores, RootState } from "../../store"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { DBTables } from "../../types/supabase-extended"
 import { setHotkeysBlocked } from "../../store/hotkeysBlockReducer"
+import useModalForm from "../ModalForm/useModalForm"
 
 const useCoupletModal = () => {
-  const [modalOpen, setModalOpen] = useState(false)
+  const modalProps = useModalForm()
   const [modalItem, setModalItem] = useState<CoupletFields | null>(null)
 
   const couplets = useAppSelector(state => state[onlineListStores.couplets].items)
 
   const dispatch = useAppDispatch()
 
-  const handleModalOpen = (
+  const handleOpen = (
     couplet: RootState[onlineListStores.couplets]['items'][0] | null,
     songId: DBTables['Song']['Row']['id'],
     index?: DBTables['Couplet']['Row']['id']
@@ -36,25 +35,21 @@ const useCoupletModal = () => {
       })
     }
     dispatch(setHotkeysBlocked(true))
-    setModalOpen(true)
+    modalProps.handleOpen()
   }
 
-  const handleModalClose = () => {
+  const handleClose = () => {
     dispatch(setHotkeysBlocked(false))
-    setModalOpen(false)
+    modalProps.handleClose()
     setModalItem(null)
   }
 
-  const { enqueueSnackbar } = useSnackbar()
-
-  const theme = useTheme()
-
   return {
-    handleModalOpen,
-    handleModalClose,
-    enqueueSnackbar,
-    theme,
-    modalOpen,
+    handleOpen,
+    handleClose,
+    enqueueSnackbar: modalProps.enqueueSnackbar,
+    theme: modalProps.theme,
+    isOpen: modalProps.isOpen,
     modalItem
   }
 }

@@ -1,18 +1,20 @@
 import * as Yup from 'yup'
-import { Abc, Close, Percent } from '@mui/icons-material'
-import { Box, Button, IconButton, InputAdornment, Modal, Paper, Typography } from '@mui/material'
-import { Field, Formik, FormikConfig } from 'formik'
+import { Abc, Percent } from '@mui/icons-material'
+import { InputAdornment } from '@mui/material'
+import { Field, FormikConfig } from 'formik'
 import { TextField } from 'formik-mui'
 import { useSnackbar } from 'notistack'
 import AddParameters from '../../../types/AddParameters'
 import useSongModal from '../useSongModal'
-import { CenteredModalBox } from '../../StyledMUI'
 import { PostgrestError } from '@supabase/supabase-js'
-import { QrStyles, supabaseAPI, useSupabaseQr } from '../../../supabase/supabaseAPI'
-import useQrModal from './useQrModal'
+import { supabaseAPI, useSupabaseQr } from '../../../supabase/supabaseAPI'
 import { MuiColorInput } from 'mui-color-input'
+import useModalForm from '../../ModalForm/useModalForm'
+import ModalForm from '../../ModalForm/ModalForm'
 
-const SongSchema = Yup.object().shape({
+type QrStyles = Omit<ReturnType<typeof useSupabaseQr>['qrStyles'], 'shown'>
+
+const QRSchema = Yup.object().shape({
   data: Yup.string()
     .required('Необходимо заполнить'),
   size: Yup.number()
@@ -26,12 +28,12 @@ const SongSchema = Yup.object().shape({
     .required('Необходимо заполнить'),
 })
 
-type IOnQrFormSubmit = AddParameters<
+type OnQrFormSubmit = AddParameters<
   AddParameters<
     FormikConfig<QrStyles>['onSubmit'], 
     [ReturnType<typeof useSnackbar>['enqueueSnackbar']]
   >,
-  [ReturnType<typeof useSongModal>['handleModalClose']]
+  [ReturnType<typeof useModalForm>['handleClose']]
 >
 
 const errCodes = [
@@ -39,7 +41,7 @@ const errCodes = [
 ]
   
 
-const onQrFormSubmit: IOnQrFormSubmit = async (
+const onQrFormSubmit: OnQrFormSubmit = async (
   values, 
   actions, 
   enqueueSnackbar,
@@ -62,147 +64,78 @@ const onQrFormSubmit: IOnQrFormSubmit = async (
   handleModalClose()
 }
 
-const QrModal = ({
-  enqueueSnackbar,
-  handleModalClose,
-  handleModalOpen,
-  curState,
-  modalOpen,
-  theme
-}: ReturnType<typeof useQrModal> & { curState: ReturnType<typeof useSupabaseQr>['qrStyles'] }) => {
+const QrModal = (props: ReturnType<typeof useModalForm> & {
+  curState: QrStyles
+}) => {
   return (
-    <Modal open={modalOpen} onClose={handleModalClose} >
-      <CenteredModalBox>
-        <Paper elevation={1} sx={{minWidth: '600px'}} >
-          <Box 
-            sx={{
-              backgroundColor: theme.palette.primary.main,
-              color: theme.palette.primary.contrastText,
-              borderTopLeftRadius: 'inherit',
-              borderTopRightRadius: 'inherit',
-              padding: theme.spacing(1, 2),
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between'
+    <ModalForm
+      {...props}
+      curState={props.curState}
+      modalName='Стиль QR'
+      onFormSubmit={onQrFormSubmit}
+      schema={QRSchema}
+    >
+      {({ values, errors, setFieldValue }) => (
+        <>
+          <Field
+            component={TextField}
+            name="data"
+            label="Текст QR"
+            size='small'
+            variant="filled"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Abc />
+                </InputAdornment>
+              ) 
             }}
-          >
-            <Typography variant='h6' component='h2' textAlign={'center'}>
-              Параметры QR-кода
-            </Typography>
-            <IconButton 
-              sx={{ color: theme.palette.primary.contrastText }}
-              onClick={handleModalClose}
-            >
-              <Close />
-            </IconButton>
-          </Box>
-          <Box padding={2}>
-            <Formik
-              initialValues={curState}
-              onSubmit={
-                (values, actions) => {
-                  onQrFormSubmit(
-                    values, 
-                    actions, 
-                    enqueueSnackbar,
-                    handleModalClose
-                  )
-                }
-              }
-              validationSchema={SongSchema}
-            >
-              {({ submitForm, values, setFieldValue, errors }) => (
-                <Box 
-                  display={'flex'}
-                  flexDirection={'column'} 
-                  gap={1}
-                  onKeyUp={(e) => {
-                    if (e.ctrlKey && e.key === 'Enter') {
-                      submitForm()
-                      e.stopPropagation()
-                    }
-                  }}
-                >
-                  <Field
-                    component={TextField}
-                    name="data"
-                    label="Текст QR"
-                    size='small'
-                    variant="filled"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position='start'>
-                          <Abc />
-                        </InputAdornment>
-                      ) 
-                    }}
-                  />
-                  <Field
-                    component={TextField}
-                    name="size"
-                    label="Размер"
-                    size='small'
-                    variant="filled"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position='start'>
-                          <Percent />
-                        </InputAdornment>
-                      ) 
-                    }}
-                  />
-                  <MuiColorInput
-                    size='small'
-                    variant='filled'
-                    label='Основной цвет'
-                    name='fgColor'
-                    value={values.fgColor ?? '#ffffffff'}
-                    onInput={console.log}
-                    onChange={(_, colors) => {
-                      setFieldValue('fgColor', colors.hex8)
-                    }}
-                    error={!!errors.fgColor}
-                    helperText={errors.fgColor}
-                    format={'hex8'}
-                  />
-                  <MuiColorInput
-                    size='small'
-                    variant='filled'
-                    label='Цвет фона'
-                    name='bgColor'
-                    value={values.bgColor ?? '#ffffffff'}
-                    onInput={console.log}
-                    onChange={(_, colors) => {
-                      setFieldValue('bgColor', colors.hex8)
-                    }}
-                    error={!!errors.bgColor}
-                    helperText={errors.bgColor}
-                    format={'hex8'}
-                  />
-                  <Box display={'flex'} gap={1} justifyContent={'flex-end'} marginTop={2}>
-                    <Button
-                      title='Сохранить (ctrl + enter)'
-                      variant="contained"
-                      color="secondary"
-                      onClick={submitForm}
-                    >
-                      Сохранить
-                    </Button>
-                    <Button
-                      title='Отменить (esc)'
-                      variant='outlined'
-                      onClick={handleModalClose}
-                    >
-                      Отменить
-                    </Button>
-                  </Box>
-                </Box>
-              )}
-            </Formik>
-          </Box>
-        </Paper>
-      </CenteredModalBox>
-    </Modal>
+          />
+          <Field
+            component={TextField}
+            name="size"
+            label="Размер"
+            size='small'
+            variant="filled"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Percent />
+                </InputAdornment>
+              ) 
+            }}
+          />
+          <MuiColorInput
+            size='small'
+            variant='filled'
+            label='Основной цвет'
+            name='fgColor'
+            value={values.fgColor ?? '#ffffffff'}
+            onInput={console.log}
+            onChange={(_, colors) => {
+              setFieldValue('fgColor', colors.hex8)
+            }}
+            error={!!errors.fgColor}
+            helperText={errors.fgColor}
+            format={'hex8'}
+          />
+          <MuiColorInput
+            size='small'
+            variant='filled'
+            label='Цвет фона'
+            name='bgColor'
+            value={values.bgColor ?? '#ffffffff'}
+            onInput={console.log}
+            onChange={(_, colors) => {
+              setFieldValue('bgColor', colors.hex8)
+            }}
+            error={!!errors.bgColor}
+            helperText={errors.bgColor}
+            format={'hex8'}
+          />
+        </>
+      )}
+    </ModalForm>
   )
 }
 

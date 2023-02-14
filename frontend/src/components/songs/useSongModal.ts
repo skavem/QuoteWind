@@ -1,43 +1,36 @@
-import { useTheme } from "@mui/material"
-import { useSnackbar } from "notistack"
 import { useState } from "react"
 import { SongFields } from "./songs/SongModal"
 import { onlineListDefaultItem } from "../../types/onlineList"
 import { setHotkeysBlocked } from "../../store/hotkeysBlockReducer"
 import { useAppDispatch } from "../../store/hooks"
+import useModalForm from "../ModalForm/useModalForm"
 
 const useSongModal = () => {
-  const [modalOpen, setModalOpen] = useState(false)
+  const modalProps = useModalForm()
   const [modalItem, setModalItem] = useState<SongFields | null>(null)
 
   const dispatch = useAppDispatch()
-  
-  const handleModalOpen = (item: onlineListDefaultItem | null) => {
+  const handleOpen = (item: onlineListDefaultItem | null) => {
     if (item) {
-      setModalItem({label: item.mark ?? '', name: item.data, id: item.id})
+      setModalItem({label: item.mark ? +item.mark : null, name: item.data, id: item.id})
     } else {
-      setModalItem({label: '', name: ''})
+      setModalItem({label: null, name: ''})
     }
     dispatch(setHotkeysBlocked(true))
-    setModalOpen(true)
+    modalProps.handleOpen()
   }
-
-  const handleModalClose = () => {
+  const handleClose = () => {
     dispatch(setHotkeysBlocked(false))
-    setModalOpen(false)
+    modalProps.handleClose()
     setModalItem(null)
   }
 
-  const { enqueueSnackbar } = useSnackbar()
-
-  const theme = useTheme()
-
   return {
-    handleModalOpen,
-    handleModalClose,
-    enqueueSnackbar,
-    theme,
-    modalOpen,
+    handleOpen,
+    handleClose,
+    enqueueSnackbar: modalProps.enqueueSnackbar,
+    theme: modalProps.theme,
+    isOpen: modalProps.isOpen,
     modalItem
   }
 }

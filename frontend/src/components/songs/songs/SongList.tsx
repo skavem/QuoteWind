@@ -71,7 +71,7 @@ const SongsList = () => {
             icon: Edit,
             text: 'Изменить',
             async onClick(item) {
-              modalProps.handleModalOpen(item)
+              modalProps.handleOpen(item)
             },
             shown: item => !!item
           },
@@ -89,7 +89,7 @@ const SongsList = () => {
             icon: Add,
             text: 'Добавить',
             async onClick(item) {
-              modalProps.handleModalOpen(null)
+              modalProps.handleOpen(null)
             }
           }
         ]}

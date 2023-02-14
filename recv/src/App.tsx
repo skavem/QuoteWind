@@ -243,7 +243,7 @@ function App() {
                           size={qr.size ? qr.size / 100 * window.innerHeight : 128}
                           fgColor={qr.fgColor ?? 'white'}
                           bgColor={qr.bgColor ?? 'black'}
-                          style={{marginTop: '0.5em', borderRadius: '20px'}}
+                          style={{marginTop: '0.25em', borderRadius: '20px'}}
                           includeMargin
                         /> :
                         <></>

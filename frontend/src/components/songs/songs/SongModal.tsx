@@ -1,19 +1,18 @@
-import React from 'react'
 import * as Yup from 'yup'
-import { Badge, Bookmark, Close } from '@mui/icons-material'
-import { Box, Button, IconButton, InputAdornment, Modal, Paper, Typography } from '@mui/material'
-import { Field, Formik, FormikConfig } from 'formik'
+import { Badge, Bookmark } from '@mui/icons-material'
+import { InputAdornment } from '@mui/material'
+import { Field, FormikConfig } from 'formik'
 import { TextField } from 'formik-mui'
 import { useSnackbar } from 'notistack'
 import { supabase } from '../../../supabase'
 import AddParameters from '../../../types/AddParameters'
 import useSongModal from '../useSongModal'
-import { CenteredModalBox } from '../../StyledMUI'
 import { PostgrestError } from '@supabase/supabase-js'
 import { DBTables } from '../../../types/supabase-extended'
+import ModalForm from '../../ModalForm/ModalForm'
 
 export interface SongFields {
-  label: DBTables['Song']['Row']['label'],
+  label: number | null,
   name: DBTables['Song']['Row']['name'],
   id?: DBTables['Song']['Row']['id']
 }
@@ -27,6 +26,7 @@ const SongSchema = Yup.object().shape({
     .required('Необходимо заполнить'),
   name: Yup.string()
     .required('Необходимо заполнить'),
+  id: Yup.number()
 })
 
 type IOnSongFormSubmit = AddParameters<
@@ -34,13 +34,12 @@ type IOnSongFormSubmit = AddParameters<
     FormikConfig<SongFields>['onSubmit'], 
     [ReturnType<typeof useSnackbar>['enqueueSnackbar']]
   >,
-  [ReturnType<typeof useSongModal>['handleModalClose']]
+  [ReturnType<typeof useSongModal>['handleClose']]
 >
 
 const errCodes = [
   ['23505', 'Песня с такой меткой уже существует']
 ]
-  
 
 const onSongFormSubmit: IOnSongFormSubmit = async (
   values, 
@@ -59,7 +58,7 @@ const onSongFormSubmit: IOnSongFormSubmit = async (
 
   if (values.id) {
     const { error } = await supabase.from('Song')
-      .update({ label: values.label, name: values.name})
+      .update({ label: values.label!.toString(), name: values.name})
       .eq('id', values.id)
       .select()
 
@@ -75,7 +74,7 @@ const onSongFormSubmit: IOnSongFormSubmit = async (
   } else {
     const { error } = await supabase
       .from('Song')
-      .insert({ label: values.label, name: values.name })
+      .insert({ label: values.label!.toString(), name: values.name })
 
     if (error) {
       handleError(error)
@@ -87,117 +86,48 @@ const onSongFormSubmit: IOnSongFormSubmit = async (
   handleModalClose()
 }
 
-const SongModal = ({
-  enqueueSnackbar,
-  handleModalClose,
-  handleModalOpen,
-  modalItem,
-  modalOpen,
-  theme
-}: ReturnType<typeof useSongModal>) => {
+const SongModal = (props: ReturnType<typeof useSongModal>) => {
   return (
-    <Modal open={modalOpen} onClose={handleModalClose} >
-      <CenteredModalBox>
-        <Paper elevation={1} sx={{minWidth: '600px'}} >
-          <Box 
-            sx={{
-              backgroundColor: theme.palette.primary.main,
-              color: theme.palette.primary.contrastText,
-              borderTopLeftRadius: 'inherit',
-              borderTopRightRadius: 'inherit',
-              padding: theme.spacing(1, 2),
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between'
+    <ModalForm
+      {...props}
+      modalName={'Изменить/добавить песню'}
+      curState={props.modalItem ?? { label: null, name: '' }}
+      onFormSubmit={onSongFormSubmit}
+      schema={SongSchema}
+    >
+      {(props) => (
+        <>
+        <Field
+            component={TextField}
+            name="label"
+            label="Метка"
+            size='small'
+            variant="filled"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Bookmark />
+                </InputAdornment>
+              ) 
             }}
-          >
-            <Typography variant='h6' component='h2' textAlign={'center'}>
-              Изменить песню
-            </Typography>
-            <IconButton 
-              sx={{ color: theme.palette.primary.contrastText }}
-              onClick={handleModalClose}
-            >
-              <Close />
-            </IconButton>
-          </Box>
-          <Box padding={2}>
-            <Formik
-              initialValues={modalItem ?? { label: '', name: '' }}
-              onSubmit={
-                (values, actions) => onSongFormSubmit(
-                  values, 
-                  actions, 
-                  enqueueSnackbar,
-                  handleModalClose
-                )
-              }
-              validationSchema={SongSchema}
-            >
-              {({ submitForm }) => (
-                <Box 
-                  display={'flex'}
-                  flexDirection={'column'} 
-                  gap={1}
-                  onKeyUp={(e) => {
-                    if (e.ctrlKey && e.key === 'Enter') {
-                      submitForm()
-                      e.stopPropagation()
-                    }
-                  }}
-                >
-                  <Field
-                    component={TextField}
-                    name="label"
-                    label="Метка"
-                    size='small'
-                    variant="filled"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position='start'>
-                          <Bookmark />
-                        </InputAdornment>
-                      ) 
-                    }}
-                    />
-                  <Field
-                    component={TextField}
-                    name="name"
-                    label="Имя"
-                    size='small'
-                    variant="filled"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position='start'>
-                          <Badge />
-                        </InputAdornment>
-                      ) 
-                    }}
-                  />
-                  <Box display={'flex'} gap={1} justifyContent={'flex-end'} marginTop={2}>
-                    <Button
-                      title='Сохранить песню (ctrl + enter)'
-                      variant="contained"
-                      color="secondary"
-                      onClick={submitForm}
-                    >
-                      Сохранить
-                    </Button>
-                    <Button
-                      title='Отменить изменения (esc)'
-                      variant='outlined'
-                      onClick={handleModalClose}
-                    >
-                      Отменить
-                    </Button>
-                  </Box>
-                </Box>
-              )}
-            </Formik>
-          </Box>
-        </Paper>
-      </CenteredModalBox>
-    </Modal>
+            />
+          <Field
+            component={TextField}
+            name="name"
+            label="Имя"
+            size='small'
+            variant="filled"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Badge />
+                </InputAdornment>
+              ) 
+            }}
+          />
+        </>
+      )}
+    </ModalForm>
   )
 }
 

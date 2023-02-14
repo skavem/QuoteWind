@@ -1,17 +1,15 @@
-import React from 'react'
 import * as Yup from 'yup'
-import { Bookmark, Close, Notes } from '@mui/icons-material'
-import { Box, Button, IconButton, InputAdornment, Modal, Paper, Typography } from '@mui/material'
-import { Field, Formik, FormikConfig } from 'formik'
+import { Bookmark, Notes } from '@mui/icons-material'
+import { InputAdornment } from '@mui/material'
+import { Field, FormikConfig } from 'formik'
 import { TextField } from 'formik-mui'
 import { useSnackbar } from 'notistack'
 import { supabase } from '../../../supabase'
 import AddParameters from '../../../types/AddParameters'
-import useSongModal from '../useSongModal'
-import { CenteredModalBox } from '../../StyledMUI'
 import { PostgrestError } from '@supabase/supabase-js'
 import useCoupletModal from '../useCoupletModal'
 import { DBTables } from '../../../types/supabase-extended'
+import ModalForm from '../../ModalForm/ModalForm'
 
 export type CoupletFields = {
   label: DBTables['Couplet']['Row']['label']
@@ -31,6 +29,7 @@ const SongSchema = Yup.object().shape({
     .required('Необходимо заполнить'),
   text: Yup.string()
     .required('Необходимо заполнить'),
+  index: Yup.number()
 })
 
 type IOnSongFormSubmit = AddParameters<
@@ -38,13 +37,12 @@ type IOnSongFormSubmit = AddParameters<
     FormikConfig<CoupletFields>['onSubmit'], 
     [ReturnType<typeof useSnackbar>['enqueueSnackbar']]
   >,
-  [ReturnType<typeof useSongModal>['handleModalClose']]
+  [ReturnType<typeof useCoupletModal>['handleClose']]
 >
 
 const errCodes = [
   ['PGRST000', 'Нет соединения с сервером']
 ]
-  
 
 const onSongFormSubmit: IOnSongFormSubmit = async (
   values, 
@@ -123,118 +121,51 @@ const onSongFormSubmit: IOnSongFormSubmit = async (
   handleModalClose()
 }
 
-const CoupletModal = ({
-  enqueueSnackbar,
-  handleModalClose,
-  handleModalOpen,
-  modalItem,
-  modalOpen,
-  theme
-}: ReturnType<typeof useCoupletModal>) => {
+const CoupletModal = (props: ReturnType<typeof useCoupletModal>) => {
   return (
-    <Modal open={modalOpen} onClose={handleModalClose}>
-      <CenteredModalBox>
-        <Paper elevation={1} sx={{minWidth: '600px'}} >
-          <Box 
-            sx={{
-              backgroundColor: theme.palette.primary.main,
-              color: theme.palette.primary.contrastText,
-              borderTopLeftRadius: 'inherit',
-              borderTopRightRadius: 'inherit',
-              padding: theme.spacing(1, 2),
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between'
+    <ModalForm
+      {...props}
+      curState={props.modalItem ?? { label: '', text: '', songId: 0, index: 0 }}
+      modalName={'Куплет'}
+      onFormSubmit={onSongFormSubmit}
+      schema={SongSchema}
+    >
+      {(props) => (
+        <>
+          <Field
+            component={TextField}
+            name="label"
+            label="Метка"
+            size='small'
+            variant="filled"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Bookmark />
+                </InputAdornment>
+              ) 
             }}
-          >
-            <Typography variant='h6' component='h2' textAlign={'center'}>
-              Изменить песню
-            </Typography>
-            <IconButton 
-              sx={{ color: theme.palette.primary.contrastText }}
-              onClick={handleModalClose}
-            >
-              <Close />
-            </IconButton>
-          </Box>
-          <Box padding={2}>
-            <Formik
-              initialValues={modalItem ?? { label: '', text: '', songId: 0, index: 0 }}
-              onSubmit={
-                (values, actions) => onSongFormSubmit(
-                  values, 
-                  actions, 
-                  enqueueSnackbar,
-                  handleModalClose
-                )
-              }
-              validationSchema={SongSchema}
-            >
-              {({ submitForm }) => (
-                <Box
-                  display={'flex'}
-                  flexDirection={'column'}
-                  gap={1}
-                  onKeyUp={(e) => {
-                    if (e.ctrlKey && e.key === 'Enter') {
-                      submitForm()
-                      e.stopPropagation()
-                    }
-                }}
-                >
-                  <Field
-                    component={TextField}
-                    name="label"
-                    label="Метка"
-                    size='small'
-                    variant="filled"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position='start'>
-                          <Bookmark />
-                        </InputAdornment>
-                      ) 
-                    }}
-                    />
-                  <Field
-                    component={TextField}
-                    multiline
-                    minRows={4}
-                    maxRows={10}
-                    name="text"
-                    label="Текст"
-                    size='small'
-                    variant="filled"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position='start'>
-                          <Notes />
-                        </InputAdornment>
-                      ) 
-                    }}
-                  />
-                  <Box display={'flex'} gap={1} justifyContent={'flex-end'} marginTop={2}>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={submitForm}
-                    >
-                      Сохранить
-                    </Button>
-                    <Button
-                      variant='outlined'
-                      onClick={handleModalClose}
-                    >
-                      Отменить
-                    </Button>
-                  </Box>
-                </Box>
-              )}
-            </Formik>
-          </Box>
-        </Paper>
-      </CenteredModalBox>
-    </Modal>
+          />
+          <Field
+            component={TextField}
+            multiline
+            minRows={4}
+            maxRows={10}
+            name="text"
+            label="Текст"
+            size='small'
+            variant="filled"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Notes />
+                </InputAdornment>
+              ) 
+            }}
+          />
+        </>
+      )}
+    </ModalForm>
   )
 }
 
