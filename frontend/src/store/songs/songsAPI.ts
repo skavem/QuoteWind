@@ -1,16 +1,15 @@
 import { AppDispatch } from ".."
 import { supabase } from "../../supabase"
-import { onlineListDefaultItem } from "../../types/onlineList"
 import { Database } from "../../types/supabase"
 import { DBTables } from "../../types/supabase-extended"
 import { setCouplets } from "../couplets/coupletsAPI"
-import { songsSlice } from "./songsReducer"
+import { Song, songsSlice } from "./songsReducer"
 
 export const setSongs = (
   songs: Database['public']['Tables']['Song']['Row'][]
 ) => async (dispatch: AppDispatch) => {
   const normalizedSongs = songs
-  .map<onlineListDefaultItem>(song => ({
+  .map<Song>(song => ({
     id: song.id,
     data: song.name,
     mark: song.label
@@ -25,8 +24,8 @@ export const setSongs = (
 }
 
 export const setCurrentSong = (
-  songId: onlineListDefaultItem['id'],
-  coupletId: onlineListDefaultItem['id'] | null = null
+  songId: Song['id'],
+  coupletId: Song['id'] | null = null
 ) => async (dispatch: AppDispatch) => {
   dispatch(songsSlice.actions.setCurrent(songId))
   const { data: couplets } = await supabase

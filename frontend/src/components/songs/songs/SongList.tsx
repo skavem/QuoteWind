@@ -6,17 +6,17 @@ import { setCurrentSong } from '../../../store/songs/songsAPI'
 import OnlineList from '../../OnlineList/OnlineList'
 import SongAutocomplete from '../SongAutocomplete'
 import useContextMenuWithItem from '../../../utils/hooks/useContextMenuWithItem'
-import { onlineListDefaultItem } from '../../../types/onlineList'
 import OnlineListMenu from './OnlineListMenu'
 import { addSongsFav } from '../../../store/songFavorites/songFavoritesAPI'
 import useSongPagination from '../useSongPagination'
 import useSongModal from '../useSongModal'
 import SongModal from './SongModal'
 import { supabase } from '../../../supabase'
+import { Song } from '../../../store/songs/songsReducer'
 
 const SongsList = () => {
   const { page, pagesCount, setPage, songsOnPage } = useSongPagination()
-  const menuProps = useContextMenuWithItem<onlineListDefaultItem>()
+  const menuProps = useContextMenuWithItem<Song>()
 
   const modalProps = useSongModal()
 

@@ -80,7 +80,7 @@ const onSongFormSubmit: IOnSongFormSubmit = async (
       handleError(error)
       return
     }
-  }
+}
 
   actions.setSubmitting(false)
   handleModalClose()
@@ -91,7 +91,7 @@ const SongModal = (props: ReturnType<typeof useSongModal>) => {
     <ModalForm
       {...props}
       modalName={'Изменить/добавить песню'}
-      curState={props.modalItem ?? { label: null, name: '' }}
+      curState={props.modalItem ?? { label: 0, name: '' }}
       onFormSubmit={onSongFormSubmit}
       schema={SongSchema}
     >

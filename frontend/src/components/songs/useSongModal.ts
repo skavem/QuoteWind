@@ -1,20 +1,27 @@
 import { useState } from "react"
 import { SongFields } from "./songs/SongModal"
-import { onlineListDefaultItem } from "../../types/onlineList"
 import { setHotkeysBlocked } from "../../store/hotkeysBlockReducer"
-import { useAppDispatch } from "../../store/hooks"
+import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import useModalForm from "../ModalForm/useModalForm"
+import { Song } from "../../store/songs/songsReducer"
+import { onlineListStores } from "../../store"
+
+const getNewSongNumber = (songs: Song[]) => {
+  const lastSongNumber = songs.slice(-1)[0].mark
+  return +lastSongNumber < 13600 ? 13601 : +lastSongNumber + 1
+}
 
 const useSongModal = () => {
   const modalProps = useModalForm()
   const [modalItem, setModalItem] = useState<SongFields | null>(null)
+  const songs = useAppSelector(state => state[onlineListStores.songs].items)
 
   const dispatch = useAppDispatch()
-  const handleOpen = (item: onlineListDefaultItem | null) => {
+  const handleOpen = (item: Song | null) => {
     if (item) {
-      setModalItem({label: item.mark ? +item.mark : null, name: item.data, id: item.id})
+      setModalItem({label: +item.mark, name: item.data, id: item.id})
     } else {
-      setModalItem({label: null, name: ''})
+      setModalItem({label: getNewSongNumber(songs), name: ''})
     }
     dispatch(setHotkeysBlocked(true))
     modalProps.handleOpen()
