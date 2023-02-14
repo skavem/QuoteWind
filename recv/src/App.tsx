@@ -224,8 +224,8 @@ function App() {
             style={{
               ...defaultStyle,
               ...transitionStyles[state],
+              ...((verseText || debouncedVerseText) && verseStyles ? verseStyles : {}),
               ...((coupletText || debouncedCoupletText) && coupletStyles ? coupletStyles : {}),
-              ...((verseText || debouncedVerseText) && verseStyles ? verseStyles : {})
             }}
           >
             {

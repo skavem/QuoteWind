@@ -21,21 +21,33 @@ export const isValidQrStylesObject = (data: Json): data is QrStyles => {
   return isValidObject(data) 
     && 'data' in data && typeof data.data === 'string' 
     && 'shown' in data && typeof data.shown === 'boolean'
-    && 'size' in data && typeof data.size === 'number'
+    && 'size' in data && (
+      typeof data.size === 'number' || typeof data.size === 'string'
+    )
     && 'bgColor' in data && typeof data.bgColor === 'string'
     && 'fgColor' in data && typeof data.fgColor === 'string'
 }
 export const isValidCoupletStylesObject = (data: Json): data is CoupletStyles => {
   return isValidObject(data)
-    && 'lineHeight' in data && typeof data.lineHeight === 'number' 
+    && 'lineHeight' in data && (
+      typeof data.lineHeight === 'number' || typeof data.lineHeight === 'string'
+    ) 
     && 'backgroundColor' in data && typeof data.backgroundColor === 'string'
     && 'color' in data && typeof data.color === 'string'
 }
 export const isValidVerseStylesObject = (data: Json): data is VerseStyles => {
   return isValidObject(data)
-    && 'lineHeight' in data && typeof data.lineHeight === 'number' 
+    && 'lineHeight' in data && (
+      typeof data.lineHeight === 'number' || typeof data.lineHeight === 'string'
+    )
     && 'backgroundColor' in data && typeof data.backgroundColor === 'string'
     && 'color' in data && typeof data.color === 'string'
+}
+export const isValidStylesObject = (data: Json): data is Styles => {
+  return isValidObject(data)
+    && 'qr' in data && isValidQrStylesObject(data.qr)
+    && 'couplet' in data && isValidCoupletStylesObject(data.couplet)
+    && 'verse' in data && isValidVerseStylesObject(data.verse)
 }
 
 export const supabaseAPI = {
@@ -71,7 +83,7 @@ export const supabaseAPI = {
 
   async setQrStyles(qrStyles: QrStyles) {
     let styles = await this.getStyles()
-    if (!isValidQrStylesObject(styles)) {
+    if (!isValidStylesObject(styles)) {
       return await this.setStyles({...defaultStyles, qr: qrStyles})
     }
     return await this.setStyles({...styles, qr: qrStyles})
@@ -87,7 +99,8 @@ export const supabaseAPI = {
 
   async setCoupletStyles(coupletStyles: CoupletStyles) {
     let styles = await this.getStyles()
-    if (!isValidCoupletStylesObject(styles)) {
+    if (!isValidStylesObject(styles)) {
+      console.log(styles)
       return await this.setStyles({ ...defaultStyles, couplet: coupletStyles })
     }
     return await this.setStyles({ ...styles, couplet: coupletStyles })
@@ -103,7 +116,7 @@ export const supabaseAPI = {
 
   async setVerseStyles(verseStyles: VerseStyles) {
     let styles = await this.getStyles()
-    if (!isValidVerseStylesObject(styles)) {
+    if (!isValidStylesObject(styles)) {
       return await this.setStyles({ ...defaultStyles, verse: verseStyles })
     }
     return await this.setStyles({ ...styles, verse: verseStyles })
