@@ -45,9 +45,14 @@ const getVerseById = async (id: DBTables['Verse']['Row']['id'] | null) => {
     ? chapter[0].index as number 
     : chapter.index as number
 
-  return { text: verse.text, reference: `${book.name} ${chapterIndex}:${verse.index}`}
+  return {
+    text: verse.text,
+    reference: `${book.name} ${chapterIndex}:${verse.index}`
+  }
 }
-const getCoupletById = async (id: DBTables['Couplet']['Row']['id'] | null) => {
+const getCoupletById = async (
+  id: DBTables['Couplet']['Row']['id'] | null
+) => {
   if (!id) return null
   const { data } = await supabase
     .from('Couplet')
@@ -194,7 +199,7 @@ function App() {
   useEffect(() => {
     if (!resizeRef.current  || (coupletText === '' && verseText === '')) return
     const el = resizeRef.current
-    const partOfScreenToFitInto = coupletText ? 0.88 : undefined
+    const partOfScreenToFitInto = coupletText ? 0.9 : 0.5
     resizeEl({ el, partOfScreenToFitInto, end: 120 })
   }, [verseText, coupletText, debouncedCoupletText, debouncedVerseText, qr])
 
@@ -224,8 +229,16 @@ function App() {
             style={{
               ...defaultStyle,
               ...transitionStyles[state],
-              ...((verseText || debouncedVerseText) && verseStyles ? verseStyles : {}),
-              ...((coupletText || debouncedCoupletText) && coupletStyles ? coupletStyles : {}),
+              ...(
+                (verseText || debouncedVerseText) && verseStyles 
+                  ? verseStyles 
+                  : {}
+              ),
+              ...(
+                (coupletText || debouncedCoupletText) && coupletStyles 
+                  ? coupletStyles 
+                  : {}
+              ),
             }}
           >
             {
