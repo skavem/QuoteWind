@@ -1,6 +1,6 @@
 import * as Yup from 'yup'
-import { FormatLineSpacing } from '@mui/icons-material'
-import { InputAdornment } from '@mui/material'
+import { FormatLineSpacing, SettingsBackupRestore } from '@mui/icons-material'
+import { Button, InputAdornment } from '@mui/material'
 import { Field } from 'formik'
 import { TextField } from 'formik-mui'
 import { PostgrestError } from '@supabase/supabase-js'
@@ -8,7 +8,7 @@ import { supabaseAPI } from '../../../supabase/supabaseAPI'
 import { MuiColorInput } from 'mui-color-input'
 import useModalForm from '../../ModalForm/useModalForm'
 import ModalForm, { OnFormSubmit } from '../../ModalForm/ModalForm'
-import { VerseStyles } from '../../../store/shown/shownReducer'
+import { defaultStyles, VerseStyles } from '../../../store/shown/shownReducer'
 
 const VerseStylesSchema = Yup.object().shape({
   lineHeight: Yup.number()
@@ -25,6 +25,7 @@ const VerseStylesSchema = Yup.object().shape({
 const errCodes = [
   ['23505', 'Ошибка 23505']
 ]
+
 
 const onVerseStylesFormSubmit: OnFormSubmit<
   VerseStyles
@@ -75,7 +76,19 @@ const VerseStylesModal = (props: ReturnType<typeof useModalForm> & {
                 <InputAdornment position='start'>
                   <FormatLineSpacing />
                 </InputAdornment>
-              ) 
+              ),
+              endAdornment: (
+                +values.lineHeight !== defaultStyles.verse.lineHeight 
+                ? <Button
+                    onClick={() => setFieldValue(
+                      'lineHeight',
+                      defaultStyles.verse.lineHeight
+                    )}
+                  >
+                    <SettingsBackupRestore />
+                  </Button>
+                : <></>
+              )
             }}
           />
           <MuiColorInput
@@ -90,6 +103,20 @@ const VerseStylesModal = (props: ReturnType<typeof useModalForm> & {
             error={!!errors.color}
             helperText={errors.color}
             format={'hex8'}
+            InputProps={{
+              endAdornment: (
+                values.color !== defaultStyles.verse.color 
+                ? <Button
+                    onClick={() => setFieldValue(
+                      'color',
+                      defaultStyles.verse.color
+                    )}
+                  >
+                    <SettingsBackupRestore />
+                  </Button>
+                : <></>
+              )
+            }}
           />
           <MuiColorInput
             size='small'
@@ -103,6 +130,20 @@ const VerseStylesModal = (props: ReturnType<typeof useModalForm> & {
             error={!!errors.backgroundColor}
             helperText={errors.backgroundColor}
             format={'hex8'}
+            InputProps={{
+              endAdornment: (
+                values.backgroundColor !== defaultStyles.verse.backgroundColor 
+                ? <Button
+                    onClick={() => setFieldValue(
+                      'backgroundColor',
+                      defaultStyles.verse.backgroundColor
+                    )}
+                  >
+                    <SettingsBackupRestore />
+                  </Button>
+                : <></>
+              )
+            }}
           />
         </>
       )}

@@ -53,8 +53,6 @@ const findAndSetVerses = async (
 
     if (!verses || verses.length === 0) return []
 
-    console.log(verses)
-
     return verses
       .filter((verse): verse is {
         id: number, text: string, index: number, chapter_id: {
@@ -78,7 +76,7 @@ const findAndSetVerses = async (
       )) 
   }
 
-  const { data: verses, error } = await supabase
+  const { data: verses } = await supabase
     .from('Verse')
     .select(
       `text, verseId:id, verseIndex:index,
@@ -88,8 +86,6 @@ const findAndSetVerses = async (
     )
     .textSearch('fts', debouncedInput, {type: 'websearch', config:'russian'})
     .range(0, 20)
-  
-  if (error) console.log(error)
 
   if (verses) {
     const newVerses: SearchedVerse[] = []

@@ -1,6 +1,6 @@
 import * as Yup from 'yup'
-import { FormatLineSpacing } from '@mui/icons-material'
-import { InputAdornment } from '@mui/material'
+import { FormatLineSpacing, SettingsBackupRestore } from '@mui/icons-material'
+import { Button, InputAdornment } from '@mui/material'
 import { Field, FormikConfig } from 'formik'
 import { TextField } from 'formik-mui'
 import { useSnackbar } from 'notistack'
@@ -10,7 +10,7 @@ import { supabaseAPI } from '../../../supabase/supabaseAPI'
 import { MuiColorInput } from 'mui-color-input'
 import ModalForm from '../../ModalForm/ModalForm'
 import useModalForm from '../../ModalForm/useModalForm'
-import { CoupletStyles } from '../../../store/shown/shownReducer'
+import { CoupletStyles, defaultStyles } from '../../../store/shown/shownReducer'
 
 const CoupletStylesSchema = Yup.object().shape({
   lineHeight: Yup.number()
@@ -83,7 +83,19 @@ const CoupletStylesModal = (props: ReturnType<typeof useModalForm> & {
                 <InputAdornment position='start'>
                   <FormatLineSpacing />
                 </InputAdornment>
-              ) 
+              ),
+              endAdornment: (
+                +values.lineHeight !== defaultStyles.couplet.lineHeight 
+                ? <Button
+                    onClick={() => setFieldValue(
+                      'lineHeight',
+                      defaultStyles.couplet.lineHeight
+                    )}
+                  >
+                    <SettingsBackupRestore />
+                  </Button>
+                : <></>
+              )
             }}
           />
           <MuiColorInput
@@ -98,6 +110,20 @@ const CoupletStylesModal = (props: ReturnType<typeof useModalForm> & {
             error={!!errors.color}
             helperText={errors.color}
             format={'hex8'}
+            InputProps={{
+              endAdornment: (
+                values.color !== defaultStyles.couplet.color 
+                ? <Button
+                    onClick={() => setFieldValue(
+                      'color',
+                      defaultStyles.couplet.color
+                    )}
+                  >
+                    <SettingsBackupRestore />
+                  </Button>
+                : <></>
+              )
+            }}
           />
           <MuiColorInput
             size='small'
@@ -111,6 +137,20 @@ const CoupletStylesModal = (props: ReturnType<typeof useModalForm> & {
             error={!!errors.backgroundColor}
             helperText={errors.backgroundColor}
             format={'hex8'}
+            InputProps={{
+              endAdornment: (
+                values.backgroundColor !== defaultStyles.couplet.backgroundColor 
+                ? <Button
+                    onClick={() => setFieldValue(
+                      'backgroundColor',
+                      defaultStyles.couplet.backgroundColor
+                    )}
+                  >
+                    <SettingsBackupRestore />
+                  </Button>
+                : <></>
+              )
+            }}
           />
         </>
       )}

@@ -1,6 +1,6 @@
 import * as Yup from 'yup'
-import { Abc, Percent } from '@mui/icons-material'
-import { InputAdornment } from '@mui/material'
+import { Abc, Percent, SettingsBackupRestore } from '@mui/icons-material'
+import { Button, InputAdornment } from '@mui/material'
 import { Field, FormikConfig } from 'formik'
 import { TextField } from 'formik-mui'
 import { useSnackbar } from 'notistack'
@@ -10,7 +10,7 @@ import { supabaseAPI } from '../../../supabase/supabaseAPI'
 import { MuiColorInput } from 'mui-color-input'
 import useModalForm from '../../ModalForm/useModalForm'
 import ModalForm from '../../ModalForm/ModalForm'
-import { QrStyles } from '../../../store/shown/shownReducer'
+import { defaultStyles, QrStyles } from '../../../store/shown/shownReducer'
 
 const QRSchema = Yup.object().shape({
   data: Yup.string()
@@ -99,7 +99,19 @@ const QrModal = (props: ReturnType<typeof useModalForm> & {
                 <InputAdornment position='start'>
                   <Percent />
                 </InputAdornment>
-              ) 
+              ),
+              endAdornment: (
+                +values.size !== defaultStyles.qr.size 
+                ? <Button
+                    onClick={() => setFieldValue(
+                      'size',
+                      defaultStyles.qr.size
+                    )}
+                  >
+                    <SettingsBackupRestore />
+                  </Button>
+                : <></>
+              )
             }}
           />
           <MuiColorInput
@@ -115,6 +127,20 @@ const QrModal = (props: ReturnType<typeof useModalForm> & {
             error={!!errors.fgColor}
             helperText={errors.fgColor}
             format={'hex8'}
+            InputProps={{
+              endAdornment: (
+                values.fgColor !== defaultStyles.qr.fgColor 
+                ? <Button
+                    onClick={() => setFieldValue(
+                      'fgColor',
+                      defaultStyles.qr.fgColor
+                    )}
+                  >
+                    <SettingsBackupRestore />
+                  </Button>
+                : <></>
+              )
+            }}
           />
           <MuiColorInput
             size='small'
@@ -129,6 +155,20 @@ const QrModal = (props: ReturnType<typeof useModalForm> & {
             error={!!errors.bgColor}
             helperText={errors.bgColor}
             format={'hex8'}
+            InputProps={{
+              endAdornment: (
+                values.bgColor !== defaultStyles.qr.bgColor 
+                ? <Button
+                    onClick={() => setFieldValue(
+                      'bgColor',
+                      defaultStyles.qr.bgColor
+                    )}
+                  >
+                    <SettingsBackupRestore />
+                  </Button>
+                : <></>
+              )
+            }}
           />
         </>
       )}
