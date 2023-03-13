@@ -46,7 +46,21 @@ const OnlineListItem = ({
   const divider = dividerBefore ? dividerBefore(item) : null
   return (
     <>
-      {divider ? (<Divider sx={{ "&::before": { borderColor: theme.palette.secondary.dark }, "&::after": { borderColor: theme.palette.secondary.dark } }}>{divider}</Divider>) : (<></>)}
+      {divider 
+        ? (
+          <Divider 
+            sx={{ 
+              "&::before": { borderColor: theme.palette.secondary.dark, borderWidth: 2 }, 
+              "&::after": { borderColor: theme.palette.secondary.dark, borderWidth: 2 } 
+            }}
+          >
+            <Typography fontWeight={500}>
+              {divider}
+            </Typography>
+          </Divider>
+        ) 
+        : (<></>)
+      }
       <ItemBox 
         sx={{outline: (theme) => active ? `2px solid ${theme.palette.action.active}` : ''}}
         onClick={() => onClick(item)}
