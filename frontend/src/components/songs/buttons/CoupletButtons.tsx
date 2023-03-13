@@ -35,12 +35,12 @@ const CoupletButtons = () => {
       <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
         <Button
           variant='contained'
-          startIcon={shownSelected ? <VisibilityOff /> : <Visibility />}
+          startIcon={shownCoupletId ? <VisibilityOff /> : <Visibility />}
           onClick={() => {
-            supabaseAPI.showCouplet(shownSelected ? null : currentCoupletId)
+            supabaseAPI.showCouplet(shownCoupletId ? null : currentCoupletId)
           }}
         >
-          {shownSelected ? 'Спрятать' : 'Показать'}
+          {shownCoupletId ? 'Спрятать' : 'Показать'}
         </Button>
         <Button
           size='small'
@@ -87,15 +87,15 @@ const CoupletButtons = () => {
                 <MenuList id="split-button-menu" dense>
                   <MenuItem
                     onClick={() => {
-                      supabaseAPI.showCouplet(shownCoupletId ? null : currentCoupletId)
+                      supabaseAPI.showCouplet(shownSelected ? null : currentCoupletId)
                       handleCloseMenu()
                     }}
                   >
                     <ListItemIcon>
-                      {shownCoupletId ? <VisibilityOff /> : <Visibility />}
+                      {shownSelected ? <VisibilityOff /> : <Visibility />}
                     </ListItemIcon>
                     <ListItemText>
-                      {shownCoupletId ? 'Спрятать отображаемый' : 'Показать выбранный'}
+                      {shownSelected ? 'Спрятать выбранный' : 'Показать выбранный'}
                     </ListItemText>
                   </MenuItem>
                   <MenuItem

@@ -38,12 +38,12 @@ const ShowVerseButton = () => {
       <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
         <Button 
           variant='contained'
-          startIcon={shownSelected ? <VisibilityOff /> : <Visibility />}
+          startIcon={shownVerseId ? <VisibilityOff /> : <Visibility />}
           onClick={() => {
-            supabaseAPI.showVerse(shownSelected ? null : historyVerse, dispatch)
+            supabaseAPI.showVerse(shownVerseId ? null : historyVerse, dispatch)
           }}
         >
-          {shownSelected ? 'Спрятать' : 'Показать'}
+          {shownVerseId ? 'Спрятать' : 'Показать'}
         </Button>
         <Button
           size='small'
@@ -85,15 +85,15 @@ const ShowVerseButton = () => {
                 <MenuList id="split-button-menu" dense>
                   <MenuItem
                     onClick={() => {
-                      supabaseAPI.showVerse(shownVerseId ? null : historyVerse, dispatch)
+                      supabaseAPI.showVerse(shownSelected ? null : historyVerse, dispatch)
                       handleCloseMenu()
                     }}
                   >
                     <ListItemIcon>
-                      {shownVerseId ? <VisibilityOff /> : <Visibility />}
+                      {shownSelected ? <VisibilityOff /> : <Visibility />}
                     </ListItemIcon>
                     <ListItemText>
-                      {shownVerseId ? 'Спрятать отображаемый' : 'Показать выбранный'}
+                      {shownSelected ? 'Спрятать выбранный' : 'Показать выбранный'}
                     </ListItemText>
                   </MenuItem>
                   <MenuItem
