@@ -21,6 +21,10 @@ const VerseHistoryList = () => {
         onClick={(item) => {
           dispatch(setCurrentBook(item.bookId, item.chapterId, item.verseId))
         }}
+        onDoubleClick={async (item) => {
+          await dispatch(setCurrentBook(item.bookId, item.chapterId, item.verseId))
+          await supabaseAPI.showVerse(item, dispatch)
+        }}
         onItemContextMenu={menuProps.handleContextMenu}
         onContextMenu={(e) => menuProps.handleContextMenu(e, null)}
       />
