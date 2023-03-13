@@ -13,15 +13,13 @@ const Songs = () => {
           <SongsList />
         </Grid>
 
-        <Grid item xs={8} md={9} height='100%'>
-          <Grid container height={'100%'} direction={'column'} gap={1}>
-            <CoupletList />
-            <Grid container justifyContent='center' maxWidth='100%' gap={1}>
-              <CurrentCoupletButton />
-              <ToggleQrButton />
-            </Grid>
-            <SongFavorites />
+        <Grid item xs={8} md={9} container height={'100%'} flexDirection={'column'} gap={1} flexWrap={'nowrap'}>
+          <CoupletList />
+          <Grid container justifyContent='center' maxWidth='100%' gap={1}>
+            <CurrentCoupletButton />
+            <ToggleQrButton />
           </Grid>
+          <SongFavorites />
         </Grid>
       </Grid>
     </Grid>

@@ -1,8 +1,8 @@
-import { Delete } from '@mui/icons-material'
+import { Delete, DeleteSweep } from '@mui/icons-material'
 import { ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import useContextMenuWithItem from '../../../utils/hooks/useContextMenuWithItem'
 import { AppDispatch } from '../../../store'
-import { removeSongsFav } from '../../../store/songFavorites/songFavoritesAPI'
+import { clearSongsFavs, removeSongsFav } from '../../../store/songFavorites/songFavoritesAPI'
 import { SongFavorite } from '../../../store/songFavorites/songFavoritesReducer'
 
 type SongFavoritesMenuProps = {
@@ -41,6 +41,18 @@ const SongFavoritesMenu = ({
           <Delete fontSize="small"/>
         </ListItemIcon>
         <ListItemText>Удалить из плана</ListItemText>
+      </MenuItem>
+      <MenuItem 
+        dense 
+        onClick={async () => {
+          await dispatch(clearSongsFavs())
+          handleClose()
+        }}
+      >
+        <ListItemIcon>
+          <DeleteSweep fontSize="small"/>
+        </ListItemIcon>
+        <ListItemText>Удалить все</ListItemText>
       </MenuItem>
     </Menu>
   )

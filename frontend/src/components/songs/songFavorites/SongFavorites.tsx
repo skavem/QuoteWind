@@ -14,7 +14,7 @@ const SongFavorites = () => {
   const menuProps = useContextMenuWithItem<SongFavorite>()
 
   return (
-    <Box display={'flex'} flexGrow={1}>
+    <Box flex={'1 1'} minHeight={0}>
       <OnlineList
         reduxStoreName={onlineListStores.songFavorites}
         onClick={songFav => {

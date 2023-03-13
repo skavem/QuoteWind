@@ -27,3 +27,11 @@ export const removeSongsFav = (
   dispatch(songFavoritesSlice.actions.removeItem(songFav))
   setCurrentSongFavsToLocalStorage(getState())
 }
+
+export const clearSongsFavs = () => async (
+  dispatch: AppDispatch,
+  getState: () => RootState
+) => {
+  dispatch(songFavoritesSlice.actions.setItems([]))
+  setCurrentSongFavsToLocalStorage(getState())
+} 

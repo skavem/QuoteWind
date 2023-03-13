@@ -1,6 +1,5 @@
 import fs from 'fs'
 import { PrismaClient } from "@prisma/client";
-import { createClient } from '@supabase/supabase-js';
 
 type Book = {
   name: string,

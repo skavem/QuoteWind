@@ -17,6 +17,7 @@ export const clearHistoryVerses = () => {
     dispatch(verseHistorySlice.actions.setItems([]))
   }
 }
+
 export const removeHistoryVerse = (verse: historyItem) => {
   return async (dispatch: AppDispatch) => {
     dispatch(verseHistorySlice.actions.removeItem(verse))
