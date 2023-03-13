@@ -103,7 +103,7 @@ const CoupletList = () => {
             text: 'Копировать текст',
             async onClick(item) {
               if (item)
-              copyToClipboard(item.data)
+              await copyToClipboard(item.data)
             },
             shown: item => !!item,
             dividerAfter: true
