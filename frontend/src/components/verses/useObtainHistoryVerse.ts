@@ -1,8 +1,8 @@
 import { onlineListStores } from "../../store"
 import { useAppSelector } from "../../store/hooks"
-import { historyItem } from "../../store/verseHistory/verseHistoryReducer"
+import { historyVerseItem } from "../../store/verseHistory/verseHistoryReducer"
 
-const useObtainHistoryVerse: () => Omit<historyItem, 'id'> | null = () => {
+const useObtainHistoryVerse: () => Omit<historyVerseItem, 'id'> | null = () => {
   const currentBookId = useAppSelector(state => state[onlineListStores.books].currentId)
   const books = useAppSelector(state => state[onlineListStores.books].items)
   const currentBook = books.find(book => book.id === currentBookId)

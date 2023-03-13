@@ -2,12 +2,15 @@ import { onlineListStores } from '../../../store'
 import { setCurrentBook } from '../../../store/books/booksApi'
 import { useAppDispatch } from '../../../store/hooks'
 import OnlineList from '../../OnlineList/OnlineList'
-import { historyItem } from '../../../store/verseHistory/verseHistoryReducer'
+import { historyVerseItem } from '../../../store/verseHistory/verseHistoryReducer'
 import useContextMenuWithItem from '../../../utils/hooks/useContextMenuWithItem'
-import VerseHistoryMenu from './VerseHistoryMenu'
+import OnlineListMenu from '../../songs/songs/OnlineListMenu'
+import { Delete, DeleteSweep, NearMe, Visibility } from '@mui/icons-material'
+import { supabaseAPI } from '../../../supabase/supabaseAPI'
+import { clearHistoryVerses, removeHistoryVerse } from '../../../store/verseHistory/verseHistoryAPI'
 
 const VerseHistoryList = () => {
-  const {contextMenu, handleClose, handleContextMenu} = useContextMenuWithItem<historyItem>()
+  const menuProps = useContextMenuWithItem<historyVerseItem>()
 
   const dispatch = useAppDispatch()
 
@@ -18,13 +21,51 @@ const VerseHistoryList = () => {
         onClick={(item) => {
           dispatch(setCurrentBook(item.bookId, item.chapterId, item.verseId))
         }}
-        onItemContextMenu={handleContextMenu}
+        onItemContextMenu={menuProps.handleContextMenu}
+        onContextMenu={(e) => menuProps.handleContextMenu(e, null)}
       />
-      <VerseHistoryMenu 
-        contextMenu={contextMenu}
-        handleClose={handleClose}
-        handleContextMenu={handleContextMenu}
-        dispatch={dispatch}
+      <OnlineListMenu 
+        {...menuProps}
+        actions={[
+          {
+            icon: NearMe,
+            text: 'Перейти',
+            async onClick(item) {
+              if (item) {
+                await dispatch(setCurrentBook(item.bookId, item.chapterId, item.verseId))
+              }
+            },
+            shown: item => !!item
+          }, 
+          {
+            icon: Visibility,
+            async onClick(item) {
+              if (!item) return
+              await dispatch(setCurrentBook(item.bookId, item.chapterId, item.verseId))
+              await supabaseAPI.showVerse(item, dispatch)
+            },
+            text: 'Перейти и показать',
+            dividerAfter: true,
+            shown: item => !!item
+          },
+          {
+            icon: Delete,
+            async onClick(item) {
+              if (item) {
+                await dispatch(removeHistoryVerse(item))
+              }
+            },
+            text: 'Удалить',
+            shown: item => !!item
+          },
+          {
+            icon: DeleteSweep,
+            async onClick(item) {
+              await dispatch(clearHistoryVerses())
+            },
+            text: 'Удалить все'
+          }
+        ]}
       />
     </>
   )

@@ -1,8 +1,8 @@
 import { AppDispatch } from ".."
-import { historyItem, verseHistorySlice } from "./verseHistoryReducer"
+import { historyVerseItem, verseHistorySlice } from "./verseHistoryReducer"
 
 export const addHistoryVerse = (
-  verse: Omit<historyItem, 'id'>
+  verse: Omit<historyVerseItem, 'id'>
 ) => {
   return async (dispatch: AppDispatch) => {
     dispatch(verseHistorySlice.actions.addItem({
@@ -18,7 +18,7 @@ export const clearHistoryVerses = () => {
   }
 }
 
-export const removeHistoryVerse = (verse: historyItem) => {
+export const removeHistoryVerse = (verse: historyVerseItem) => {
   return async (dispatch: AppDispatch) => {
     dispatch(verseHistorySlice.actions.removeItem(verse))
   }

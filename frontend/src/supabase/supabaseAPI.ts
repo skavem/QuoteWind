@@ -7,7 +7,7 @@ import { setShownCouplet, setShownVerse, setStyles } from "../store/shown/shownA
 import { CoupletStyles, defaultStyles, QrStyles, Styles, VerseStyles } from "../store/shown/shownReducer"
 import { addSong, deleteSong, setSongs, updateSong } from "../store/songs/songsAPI";
 import { addHistoryVerse } from "../store/verseHistory/verseHistoryAPI";
-import { historyItem } from "../store/verseHistory/verseHistoryReducer";
+import { historyVerseItem } from "../store/verseHistory/verseHistoryReducer";
 import { Json } from "../types/supabase"
 import { DBTables, StateRow } from "../types/supabase-extended";
 
@@ -123,7 +123,7 @@ export const supabaseAPI = {
   },
 
   async showVerse(
-    verse: Omit<historyItem, 'id'> | null,
+    verse: Omit<historyVerseItem, 'id'> | null,
     dispatch: AppDispatch
   ) {
     await supabase
