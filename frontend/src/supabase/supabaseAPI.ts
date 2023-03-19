@@ -143,6 +143,45 @@ export const supabaseAPI = {
       .from('State')
       .update({couplet_id: coupletId})
       .eq('id', 1)
+  },
+
+  async rearrangeCouplets(
+    songId: DBTables['Song']['Row']['id'],
+    from?: number
+  ) {
+    let { data: couplets, error } = await supabase
+      .from('Couplet')
+      .select('id, index')
+      .eq('song_id', songId)
+
+    if (error) {
+      throw(error)
+    }
+
+    if (typeof from === 'undefined') {
+      couplets = couplets!.map((couplet, index) => ({
+        ...couplet,
+        index: index + 1
+      }));
+    } else {
+      couplets = couplets!.map((couplet, index) => ({
+        ...couplet,
+        index: index + 1 < from ? index + 1 : index + 2
+      })).reverse();
+    }
+
+    console.log(couplets)
+
+    for await (const couplet of couplets) {
+      const { error } = await supabase
+        .from('Couplet')
+        .update({ index: couplet.index})
+        .eq('id', couplet.id)
+
+      if (error) {
+        throw(error)
+      }
+    }
   }
 }
 

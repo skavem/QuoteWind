@@ -122,6 +122,7 @@ const CoupletList = () => {
             async onClick(item) {
               if (item)
               await supabase.from('Couplet').delete().eq('id', item.id)
+              await supabaseAPI.rearrangeCouplets(songId!)
             },
             dividerAfter: true,
             shown: item => !!item

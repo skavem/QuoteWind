@@ -10,6 +10,7 @@ import { PostgrestError } from '@supabase/supabase-js'
 import useCoupletModal from '../useCoupletModal'
 import { DBTables } from '../../../types/supabase-extended'
 import ModalForm from '../../ModalForm/ModalForm'
+import { supabaseAPI } from '../../../supabase/supabaseAPI'
 
 export type CoupletFields = {
   label: DBTables['Couplet']['Row']['label']
@@ -61,7 +62,7 @@ const onSongFormSubmit: IOnSongFormSubmit = async (
 
   if ('id' in values) {
     const { error } = await supabase.from('Couplet')
-      .update({ label: values.label, text: values.text, index: values.index })
+      .update({ label: values.label, text: values.text })
       .eq('id', values.id)
       .select()
 
@@ -75,41 +76,20 @@ const onSongFormSubmit: IOnSongFormSubmit = async (
       })
     }
   } else {
-    let { data: coupletsToChangeIndexes, error } = await supabase
-      .from('Couplet')
-      .select('id, index')
-      .eq('song_id', values.songId)
-
-    if (error) {
-      handleError(error)
-      return
+    try {
+      await supabaseAPI.rearrangeCouplets(values.songId, values.index)
+    } catch (e) {
+      handleError(e as PostgrestError)
     }
 
-    coupletsToChangeIndexes = coupletsToChangeIndexes!.map((couplet, index) => ({
-      ...couplet,
-      index: index + 1 < values.index ? index + 1 : index + 2
-    })).reverse();
-
-    for await (const couplet of coupletsToChangeIndexes) {
-      const { error } = await supabase
-        .from('Couplet')
-        .update({ index: couplet.index})
-        .eq('id', couplet.id)
-
-      if (error) {
-        handleError(error)
-        return
-      }
-    }
-
-    ({ error } = await supabase
+    const { error } = await supabase
       .from('Couplet')
       .insert({
         label: values.label,
         text: values.text,
         song_id: values.songId,
         index: values.index
-      }))
+      })
 
     if (error) {
       handleError(error)
