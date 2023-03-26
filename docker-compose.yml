@@ -217,6 +217,7 @@ services:
       - ./backend/volumes/db/data:/var/lib/postgresql/data
     
   frontend:
+    restart: unless-stopped
     container_name: quotewind-frontend
     image: quotewind/frontend
     ports:
@@ -228,6 +229,7 @@ services:
         - SUPABASE_KEY=${ANON_KEY}
   
   recv:
+    restart: unless-stopped
     container_name: quotewind-recv
     image: quotewind/recv
     ports:
